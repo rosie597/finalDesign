@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		html,body{
+			padding: 0;
+			margin: 0;
+			height: 100%;
+			width: 100%;
+		}
+		a{ 
+			text-decoration:none; 
+			color:#000; 
+		} 
+		.container{
+			width: 1130px;
+			margin: 0 auto;
+		}
+		.banner{
+			width: 100%;
+			position: relative;
+			height: 300px;
+			overflow: hidden;
+		}
+		.imgCtn{
+			width:4600px;
+			display: flex;
+			flex-direction: row;
+			flex-shrink: 1;
+		}
+		.banner img{
+			width: 1130px;
+		}
+		.dots{
+			position: absolute;
+			bottom: 8px;
+			right:16px;
+			width: 60px;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+		}
+		li{
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			background-color: white;
+			list-style: none;
+		}
+		li.active{
+			background-color:black;
+		}
+		h1{
+			text-align: center;
+		}
+		.content{
+			width: 100%;
+			height: 150px;
+			display: flex;
+			flex-direction: row;
+			border-bottom: 1px solid #eee;
+		}
+		.content a {
+			flex: 1;
+			display: flex;
+			flex-direction: row;
+		}
+		.authorBox{
+			text-align: left;
+			line-height: 50px;
+			font-size: 22px;
+			height: 100%;
+			width: 100px;
+			margin-right: 50px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+		.avatar{
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			display: block;
+			margin:5px;
+		}
+		.delete {
+			color: red;
+			height: 100%;
+			line-height: 150px;
+			margin-right:30px;
+			cursor: pointer;
+		}
+		.newArticle{
+			text-align: top;
+		}
+		input,button,textarea{
+			margin-top: 10px;
+			margin-bottom: 10px;
+			font-size: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="banner" id='banner'>
+			<div class="imgCtn" id='imgCtn'>
+				<% for(var i=0;i<banners.length;i++){ %>
+					<img src="<%= banners[i].src %>" alt=''/>
+				<% } %>
+			</div>
+			<ul class="dots" id='dots'>
+				<li class="active"></li>
+				<li></li>
+				<li></li>
+			</ul>
+		</div>
+		<div id='articles'>
+			<% for(let i=0;i<article.length;i++){ %>
+				<div class="content" id='articleItem'>
+					<a href="/article?id=<%= article[i].ID %>">
+						<div class="authorBox">
+							<img src="<%= article[i].cover %>" alt='' class='avatar'/>
+							<span>
+								<%= article[i].author %>
+							</span>
+						</div>
+						<div class="text">
+							<h2>
+								<%= article[i].title %>
+							</h2>
+							<span>
+								<%= article[i].intro %>
+							</span>
+						</div>
+					</a>
+					<div class='delete' id='delete' data-id="<%= i %>" >删除</div>
+				</div>
+			<% } %>
+		</div>
+		<div class="newArticle">
+			<h1>发表新文章</h1>
+			<!-- <form  method='post'  id='newArticle'>
+				作者署名：<input type='text' name='author'/><br/> -->
+				<form>
+					上传封面：<input type="file" id='upload' name="img" accept="image/jpg,image/jpeg,image/png"> 
+					<input type="button" value='上传' id='sub1'/>
+					输入标题：<input type='text' name='title' id='title'/><br/>
+					输入内容：<textarea cols='60' rows='10' wrap='hard' name='content' id='content'></textarea><br/>
+					<input type='button' id='sub2' value='提交文章'>
+				</form>
+				<!-- <br/>
+				输入标题：<input type='text' name='title'/><br/>
+				输入内容：<textarea cols='60' rows='10' wrap='hard' name='content'></textarea><br/>
+				<button type='submit'>提交文章</button> -->
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript" src="./ajax.js"></script>
+	<script type="text/javascript">
+		function interval(fn,t){
+			var inter=function(){
+				setTimeout(inter,t)
+				try{
+					fn.call(null)
+				}catch(e){
+					throw e.toString()
+				}
+			}
+			setTimeout(inter,t)
+		}
+
+		window.onload=function () {
+			var oDots=document.getElementById('dots')
+			var banner=document.getElementById('imgCtn')
+			var lis=oDots.getElementsByTagName('li')
+			var oSub1=document.getElementById('sub1')
+			var oSub2=document.getElementById('sub2')
+			var formData=new FormData();
+			var oUpload=document.getElementById('upload')
+			var url = ''
+			var arr = <%- JSON.stringify(article) %>;
+			oUpload.addEventListener('change',()=>{
+				var e=window.event||arguments.callee.caller.arguments[0]
+				var file=e.target.files[0]
+				formData.append('cover', file)
+			})
+			oSub1.addEventListener('click', ()=>{
+				console.log(formData)
+				ajax({
+					url:"/img",
+					method:'post',
+					data:formData,
+					success: function(res) {
+						url=JSON.parse(res).data
+						alert('上传成功') 
+					},
+					fail: function(err) {
+						console.log('上传失败',err) 
+					}
+				})
+			})
+			oSub2.addEventListener('click',()=>{
+				var title=document.getElementById('title').value
+				var content=document.getElementById('content').value
+				var formData2 = new FormData()
+				formData2.append('cover', url)
+				formData2.append('title',title)
+				formData2.append('content',content)
+				ajax({
+					url: "/newArticle",
+					method: 'post',
+					data: formData2,
+					success:function(res){
+						alert('提交成功')
+					},
+					fail:function(err){
+						console.log('提交失败')
+					}
+				})
+			})
+			oDots.addEventListener('click',(e)=>{
+				var target=e.srcElement||e.target
+				if(target.nodeName.toLowerCase()==='li'){
+					for(let i=0;i<lis.length;i++){
+						lis[i].classList.remove('active')
+						if(lis[i]==target){
+							lis[i].classList.add('active')
+							banner.style.marginLeft=-1130*i+'px'
+						}
+					}
+				}
+			},true)
+			var i=-1
+			interval(()=>{
+				var oDots=document.getElementById('dots')
+				var lis=oDots.getElementsByTagName('li')
+				var banner=document.getElementById('imgCtn')
+				if(i==lis.length-1){i=-1;}
+				else{
+					i=i+1;
+					for(let j=0;j<lis.length;j++){
+						lis[j].classList.remove('active')
+					}
+					lis[i].classList.add('active')
+					banner.style.marginLeft=-1130*i+'px'
+				}
+			},1000)
+			// oSub1.addEventListener('click',function(){
+			// 	var oFile=document.getElementById('upload').files[0]
+			// 	console.log(oFile)
+			// 	formData.append('cover',oFile)
+			// })
+			// function interval(lis){
+			// 	for(var i=0;i<lis.length;i++){
+			// 		(function(i){
+			// 			setTimeout(()=>{
+			// 				for(let j=0;j<lis.length;j++){
+			// 					lis[j].classList.remove('active')
+			// 				}
+			// 				lis[i].classList.add('active')
+			// 				banner.style.marginLeft=-1130*i+'px'
+			// 				console.log('1')
+			// 			},1000*i)
+			// 		})(i)
+			// 	}
+			// 	return interval(lis)
+			// }
+			// interval(lis)
+			var oDel = document.getElementById('delete');
+			oDel.addEventListener('click', ev => {
+				var idx = Number(ev.target.dataset.id)
+				var oArticles = document.getElementById('articles')
+				var tempStr = ''
+				arr.splice(idx, 1)
+				arr.forEach((item, i) => {
+					tempStr += `
+						<div class="content" id='articleItem'>
+							<a href="/article?id=${item.ID} %>">
+								<div class="authorBox">
+									<img src="${item.cover}" alt='' class='avatar'/>
+									<span>
+										${item.author}
+									</span>
+								</div>
+								<div class="text">
+									<h2>
+										${item.title}
+									</h2>
+									<span>
+										${item.intro}
+									</span>
+								</div>
+							</a>
+							<div class='delete' id='delete' data-id="${i}" >删除</div>
+						</div>
+					`
+				})
+				articles.innerHTML = tempStr
+			})	
+		}
+	</script>
+</body>
+</html>

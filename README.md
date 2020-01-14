@@ -21,7 +21,7 @@
 * 前端代码打包在 fe 目录下执行
 > npm run build
 * node 启动服务在 server 目录下执行
-> npm run start
+> npm run serve
 * 若端口占用则修改端口号重新启动服务即可
 ### 五. 线上部署
 暂无，敬请期待

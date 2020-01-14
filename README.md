@@ -16,7 +16,7 @@
 ### 四. 项目启动
 * 分别在 fe 和 server 目录下执行  
 > npm install
-* 纯前端代码开发在 fe 目录下执行
+* 纯前端代码开发调试在 fe 目录下执行
 > npm run dev
 * 前端代码打包在 fe 目录下执行
 > npm run build

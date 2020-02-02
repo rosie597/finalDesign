@@ -21,14 +21,14 @@
                   <el-submenu index="2">
                     <template slot="title">
                       <i class="el-icon-location"></i>
-                      <span>社团</span>
+                      <span>组织</span>
                     </template>
                     <el-menu-item-group>
-                      <el-menu-item index="/communityCreate">社团创建</el-menu-item>
-                      <el-menu-item index="/communityManage">社团管理</el-menu-item>
+                      <el-menu-item index="/communityCreate">组织创建</el-menu-item>
+                      <el-menu-item index="/communityManage">组织管理</el-menu-item>
                     </el-menu-item-group>
                   </el-submenu>
-                  <el-submenu index="2">
+                  <el-submenu index="3">
                     <template slot="title">
                       <i class="el-icon-location"></i>
                       <span>活动</span>

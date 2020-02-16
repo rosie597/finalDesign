@@ -19,8 +19,5 @@ new Vue({
   el: '#app',
   router,
   components: { App },
-  template: '<App/>',
-  data: {
-  	a: 123
-  }
+  template: '<App/>'
 });

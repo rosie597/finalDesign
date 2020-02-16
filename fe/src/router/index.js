@@ -7,6 +7,7 @@ import ActivityApproval from '@/components/approval/activity';
 import CommunityApproval from '@/components/approval/community';
 import CommunityCreate from '@/components/community/create';
 import CommunityManage from '@/components/community/manage';
+import CommunitySetup from '@/components/community/setup';
 
 Vue.use(Router);
 
@@ -46,6 +47,11 @@ export default new Router({
       path: '/communityManage',
       name: 'communityManage',
       component: CommunityManage,
+    },
+    {
+      path: '/community/setup',
+      name: 'communitySetup',
+      component: CommunitySetup,
     },
   ],
 });

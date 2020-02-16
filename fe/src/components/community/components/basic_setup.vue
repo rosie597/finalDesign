@@ -3,13 +3,13 @@
 
 <template>
   <div class="container">
-    activity
+    2
   </div>
 </template>
 
 <script>
 export default {
-  name: 'ActivityApproval',
+  name: 'BasicSetup',
   data() {
     return {
     };

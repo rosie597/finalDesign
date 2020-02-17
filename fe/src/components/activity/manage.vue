@@ -3,6 +3,7 @@
 
 <template>
   <div class="container">
+  	<h1>组织管理</h1>
     <el-form :inline="true" :model="queryForm" class="demo-form-inline">
 	  <el-form-item label="活动名">
 	    <el-input v-model="queryForm.name" placeholder="活动名"></el-input>
@@ -19,6 +20,8 @@
 	  </el-form-item>
 	  <el-form-item>
 	    <el-button type="primary" @click="queryData(0)">查询</el-button>
+	    <!-- 暂定功能 -->
+	    <el-button type="primary" @click="">导出excel</el-button>
 	  </el-form-item>
 	</el-form>
 
@@ -28,7 +31,7 @@
 	    style="width: 100%">
 	    <el-table-column
 	      v-for="(item, index) in tableColumnConfig"
-	      :key="item.rows"
+	      :key="item.row"
 	      :fixed="index === 0"
 	      :prop="item.row"
 	      :label="item.label"
@@ -44,14 +47,14 @@
 	        <el-button @click="deleteActivity(scope.row)" type="text" size="small">删除</el-button>
 	      </template>
 	    </el-table-column>
-	  </el-table>
+    </el-table>
 
-	  <el-pagination
-	    layout="prev, pager, next"
-	    :total="totalPage"
-	    :page-size="pageSize"
-	    @current-change="queryData">
-	  </el-pagination>
+	<el-pagination
+	  layout="prev, pager, next"
+	  :total="totalPage"
+	  :page-size="pageSize"
+	  @current-change="queryData">
+	</el-pagination>
   </div>
 </template>
 

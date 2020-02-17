@@ -3,6 +3,7 @@
 
 <template>
   <div class="container">
+  	<h1>组织管理</h1>
     <el-form :inline="true" :model="queryForm" class="demo-form-inline">
 	  <el-form-item label="组织名称">
 	    <el-input v-model="queryForm.name" placeholder="组织名称"></el-input>

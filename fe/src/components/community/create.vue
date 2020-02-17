@@ -13,6 +13,7 @@
 	  height: 20px;
 	  border-bottom: 1px solid #eee;
 	  padding: 15px;
+	  font-weight: bold;
 	}
 	.card-footer {
 	  height: 50px;
@@ -107,7 +108,7 @@
 					  type="textarea"
 					  :autosize="{ minRows: 2, maxRows: 6}"
 					  placeholder="请输入 slogan"
-					  v-model="queryForm.desc">
+					  v-model="queryForm.slogan">
 					</el-input>
 	    		</el-form-item>
     		</el-form>
@@ -118,7 +119,7 @@
     	</div>
 	    <div class="card-footer">
 	    	<el-button v-if="active && active !== CREATE_STATUS.success" @click="toLast">上一步</el-button>
-		    <el-button v-if="active < CREATE_STATUS.displayment" @click="toNext">下一步</el-button>
+		    <el-button v-if="active < CREATE_STATUS.displayment" @click="toNext" type="primary">下一步</el-button>
 		    <el-button v-if="active === CREATE_STATUS.displayment" type="primary" @click="submitForm">提交</el-button>
 		    <el-button v-if="active === CREATE_STATUS.success" type="primary" @click="toCreate">继续新建</el-button>
 	    </div>

@@ -42,8 +42,8 @@
 			</el-steps>
 	    </div>
 	    <div class="card-ctn" v-if="active === CREATE_STATUS.base_info">
-	    	<el-form ref="form" label-width="100px">
-	    		<el-form-item label="校区">
+	    	<el-form ref="form1" label-width="100px" :model="queryForm" :rules="rules1">
+	    		<el-form-item label="校区" prop="district">
 	    			<el-select v-model="queryForm.district" placeholder="请选择">
 					    <el-option
 					      v-for="item in districts"
@@ -54,11 +54,11 @@
 				    </el-select>
 	    		</el-form-item>
 
-	    		<el-form-item label="组织名称">
+	    		<el-form-item label="组织名称" prop="name">
 	    			<el-input v-model="queryForm.name" placeholder="请输入名称"></el-input>
 	    		</el-form-item>
 	    		
-	    		<el-form-item label="组织类型">
+	    		<el-form-item label="组织类型" prop="type">
 	    			<el-select v-model="queryForm.type" placeholder="请选择">
 					    <el-option
 					      v-for="item in types"
@@ -80,12 +80,12 @@
 	    	</el-form>
 	    </div>
 	    <div class="card-ctn" v-if="active === CREATE_STATUS.sponsor_info">
-	    	<el-form ref="form" label-width="100px">
-		    	<el-form-item label="组织负责人">
+	    	<el-form ref="form2" label-width="100px" :model="queryForm" :rules="rules2">
+		    	<el-form-item label="组织负责人" prop="sponsor">
 	    			<el-input v-model="queryForm.sponsor" placeholder="请输入负责人真实姓名"></el-input>
 	    		</el-form-item>
 
-	    		<el-form-item label="负责人手机">
+	    		<el-form-item label="负责人手机" prop="phone">
 	    			<el-input v-model="queryForm.phone" placeholder="请输入手机号"></el-input>
 	    		</el-form-item>
 	    	</el-form>
@@ -131,6 +131,14 @@
 export default {
   name: 'CommunityCreate',
   data() {
+  	let validatePhone = (rule, value, callback) => {
+		let reg = /^1[345789]{1}[0-9]{9}/;
+        if (!reg.test(value)) {
+          callback(new Error('手机号码格式错误！'));
+        } else {
+          callback();
+        }
+    };
     return {
     	active: this.CREATE_STATUS.base_info,
     	queryForm: {
@@ -144,12 +152,46 @@ export default {
     		logo: ''
     	},
     	districts: ['大学城', '东风路', '龙洞', '番禺'],
-    	types: ['111', '222']
+    	types: ['111', '222'],
+    	rules1: {
+	    	name: [
+	    		{ required: true, message: '请输入活动名', trigger: 'blur' }
+	    	],
+	    	district: [
+	    		{ required: true, message: '请选择区域', trigger: 'blur' }
+	    	],
+	    	type: [
+	    		{ required: true, message: '请选择活动类型', trigger: 'blur' }
+	    	]
+	    },
+	    rules2: {
+	    	sponsor: [
+	    		{ required: true, message: '请输入负责人姓名', trigger: 'blur' }
+	    	],
+	    	phone: [
+	    		{ required: true, message: '请输入负责人手机', trigger: 'blur' },
+	    		{ validator: validatePhone, trigger: 'blur'}
+	    	]
+	    }
     };
   },
   methods: {
   	toNext() {
-        if (this.active++ > this.CREATE_STATUS.displayment) {
+        if (this.active === this.CREATE_STATUS.base_info) {
+			this.$refs['form1'].validate((valid) => {
+				if (valid) {
+					this.active++;
+				}
+			})
+		} else if (this.active === this.CREATE_STATUS.sponsor_info) {
+			this.$refs['form2'].validate((valid) => {
+				if (valid) {
+					this.active++;
+				}
+			})
+		}
+		
+        if (this.active > this.CREATE_STATUS.displayment) {
         	this.active = this.CREATE_STATUS.base_info;
         }
     },

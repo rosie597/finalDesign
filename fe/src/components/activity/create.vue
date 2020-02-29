@@ -44,8 +44,8 @@
 		    </div>
 		    <div class="card-ctn">
 		    	<div class="step1" v-if="active === CREATE_STATUS.base_info">
-		    		<el-form ref="form" label-width="100px">
-			    		<el-form-item label="校区">
+		    		<el-form ref="form1" label-width="100px" :model="queryForm" :rules="rules1">
+			    		<el-form-item label="校区" prop="district">
 			    			<el-select v-model="queryForm.district" placeholder="请选择">
 							    <el-option
 							      v-for="item in districts"
@@ -56,11 +56,11 @@
 						    </el-select>
 			    		</el-form-item>
 
-			    		<el-form-item label="活动名称">
+			    		<el-form-item label="活动名称" prop="name">
 			    			<el-input v-model="queryForm.name" placeholder="请输入名称"></el-input>
 			    		</el-form-item>
 			    		
-			    		<el-form-item label="活动类型">
+			    		<el-form-item label="活动类型" prop="type">
 			    			<el-select v-model="queryForm.type" placeholder="请选择">
 							    <el-option
 							      v-for="item in activityType"
@@ -71,11 +71,11 @@
 						    </el-select>
 			    		</el-form-item>
 
-			    		<el-form-item label="活动地点">
+			    		<el-form-item label="活动地点" prop="place">
 			    			<el-input v-model="queryForm.place" placeholder="请输入具体地点"></el-input>
 			    		</el-form-item>
 
-			    		<el-form-item label="活动时间">
+			    		<el-form-item label="活动时间" prop="time">
 			    			<div>
 							    <el-date-picker
 							      v-model="queryForm.time"
@@ -88,18 +88,18 @@
 			    	</el-form>
 		    	</div>
 		    	<div class="step2" v-if="active === CREATE_STATUS.sponsor_info">
-		    		<el-form ref="form" label-width="100px">
-			    		<el-form-item label="活动负责人">
-			    			<el-input v-model="queryForm.master" placeholder="请输入真实姓名"></el-input>
+		    		<el-form ref="form2" label-width="100px" :rules="rules2" :model="queryForm">
+			    		<el-form-item label="活动负责人" prop="sponsor">
+			    			<el-input v-model="queryForm.sponsor" placeholder="请输入真实姓名"></el-input>
 			    		</el-form-item>
 
-			    		<el-form-item label="联系方式">
+			    		<el-form-item label="联系方式" prop="phone">
 			    			<el-input v-model="queryForm.phone" placeholder="请输入手机号"></el-input>
 			    		</el-form-item>
 			    	</el-form>
 		    	</div>
 		    	<div class="step3" v-if="active === CREATE_STATUS.displayment">
-		    		<el-form ref="form" label-width="100px">
+		    		<el-form ref="form3" label-width="100px">
 		    			<el-form-item label="活动封面">
 		    				<el-upload
 							  class="upload-demo"
@@ -146,6 +146,14 @@
 		name: 'ActivityCreate',
 		components: { 'vue-ueditor-wrap': vueUeditorWrap, 'card': Card },
 		data() {
+			let validatePhone = (rule, value, callback) => {
+				let reg = /^1[345789]{1}[0-9]{9}/;
+		        if (!reg.test(value)) {
+		          callback(new Error('手机号码格式错误！'));
+		        } else {
+		          callback();
+		        }
+	        };
 			return {
 				active: this.CREATE_STATUS.base_info,
 				activityType: ['111', '222'],
@@ -156,7 +164,7 @@
 					name: '',
 					place: '',
 					time: '',
-					master: '',
+					sponsor: '',
 					phone: '',
 					rich_content: ''
 				},
@@ -166,12 +174,46 @@
 			      initialFrameWidth: '100%',
 			      serverUrl: '', // 图片上传路径
 			      UEDITOR_HOME_URL: '/static/UEditor/'
+			    },
+			    rules1: {
+			    	name: [
+			    		{ required: true, message: '请输入活动名', trigger: 'blur' }
+			    	],
+			    	district: [
+			    		{ required: true, message: '请选择区域', trigger: 'blur' }
+			    	],
+			    	type: [
+			    		{ required: true, message: '请选择活动类型', trigger: 'blur' }
+			    	]
+			    },
+			    rules2: {
+			    	sponsor: [
+			    		{ required: true, message: '请输入负责人姓名', trigger: 'blur' }
+			    	],
+			    	phone: [
+			    		{ required: true, message: '请输入负责人手机', trigger: 'blur' },
+			    		{ validator: validatePhone, trigger: 'blur'}
+			    	]
 			    }
 			}
 		},
 		methods: {
 			toNext() {
-		        if (this.active++ > this.CREATE_STATUS.displayment) {
+				if (this.active === this.CREATE_STATUS.base_info) {
+					this.$refs['form1'].validate((valid) => {
+						if (valid) {
+							this.active++;
+						}
+					})
+				} else if (this.active === this.CREATE_STATUS.sponsor_info) {
+					this.$refs['form2'].validate((valid) => {
+						if (valid) {
+							this.active++;
+						}
+					})
+				}
+				
+		        if (this.active > this.CREATE_STATUS.displayment) {
 		        	this.active = this.CREATE_STATUS.base_info;
 		        }
 		    },
@@ -191,7 +233,7 @@
 					name: '',
 					place: '',
 					time: '',
-					master: '',
+					sponsor: '',
 					phone: '',
 					rich_content: ''
 				};

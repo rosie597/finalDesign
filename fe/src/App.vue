@@ -1,12 +1,10 @@
 <template>
   <div id="app">
+    <top-header></top-header>
     <el-container>
-      <el-header>
-        <div class="top-header"></div>
-      </el-header>
       <div class="body-ctn">
         <el-container>
-          <el-aside width="300px">
+          <el-aside width="250px">
             <div class="directory">
               <el-col :span="24">
                 <h5>目录</h5>
@@ -66,21 +64,27 @@
 </template>
 
 <script>
+  import { TopHeader } from './components/common/index.js'
   export default {
     name: 'App',
+    components: {
+      'top-header': TopHeader
+    }
   };
 </script>
 
-<style>
-  .top-header {
-    border-bottom: 1px solid #eee;
-    height: 100%;
-    box-shadow: 1px 5px 15px #eee;
+<style> 
+  * {
+    margin: 0;
   }
   .body-ctn {
-    padding: 0 20px;
+    padding: 0;
+    margin: 30px;
   }
   .directory {
     width: 100%;
+  }
+  .el-container {
+    padding-top: 15px;
   }
 </style>

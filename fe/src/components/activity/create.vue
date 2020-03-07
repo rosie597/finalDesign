@@ -48,7 +48,7 @@
 			    		<el-form-item label="校区" prop="district">
 			    			<el-select v-model="queryForm.district" placeholder="请选择">
 							    <el-option
-							      v-for="item in districts"
+							      v-for="(item, key) in districts"
 							      :key="item"
 							      :label="item"
 							      :value="item">
@@ -63,7 +63,7 @@
 			    		<el-form-item label="活动类型" prop="type">
 			    			<el-select v-model="queryForm.type" placeholder="请选择">
 							    <el-option
-							      v-for="item in activityType"
+							      v-for="(item, key) in activityType"
 							      :key="item"
 							      :label="item"
 							      :value="item">
@@ -156,8 +156,8 @@
 	        };
 			return {
 				active: this.CREATE_STATUS.base_info,
-				activityType: ['111', '222'],
-				districts: ['大学城', '东风路', '龙洞', '番禺'],
+				activityType: [],
+				districts: [],
 				queryForm: {
 					type: '',
 					district: '',
@@ -198,7 +198,7 @@
 			}
 		},
 		methods: {
-			toNext() {
+			toNext () {
 				if (this.active === this.CREATE_STATUS.base_info) {
 					this.$refs['form1'].validate((valid) => {
 						if (valid) {
@@ -217,15 +217,29 @@
 		        	this.active = this.CREATE_STATUS.base_info;
 		        }
 		    },
-		    toLast() {
+		    toLast () {
 		    	this.active--;
 		    },
-		    submitForm() {
+		    getDistricts () {
+		    	this.$axios.get('/districts').then(res => {
+		    		this.districts = res.data.data
+		    	}).catch(err => {
+		    		console.log(err)
+		    	})
+		    },
+		    getActivityTypes () {
+		    	this.$axios.get('/backend/activity/types').then(res => {
+		    		this.activityType = res.data.data
+		    	}).catch(err => {
+		    		console.log(err)
+		    	})
+		    },
+		    submitForm () {
 		    	// TODO: 提交表单操作
 		    	this.active = this.CREATE_STATUS.success;
 		    },
 		    // 继续新建
-		    toCreate() {
+		    toCreate () {
 		    	this.active = this.CREATE_STATUS.base_info;
 		    	this.queryForm = {
 					type: '',
@@ -238,6 +252,10 @@
 					rich_content: ''
 				};
 		    }
+		},
+		mounted () {
+			this.getDistricts();
+			this.getActivityTypes();
 		}
 	}
 </script>

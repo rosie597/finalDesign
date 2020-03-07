@@ -4,6 +4,7 @@ const c_parser=require('cookie-parser');
 const c_session=require('cookie-session'); // session 基于 cookie
 const consolidate=require('consolidate');
 const bodyParser = require('body-parser');
+const db = require('./utils/database');
 
 var server=express();
 server.listen(8883);
@@ -24,6 +25,23 @@ server.use(bodyParser.urlencoded({ extended: true }));
 server.use('/backend/user', require(__dirname + '/router/user'));
 server.use('/backend/community', require(__dirname + '/router/community'));
 server.use('/backend/activity', require(__dirname + '/router/activity'));
+
+/**
+ * 学校区域信息
+ */
+server.use('/districts', async (req, res) => {
+    try {
+        const { id } = req.query;
+        const [ data ] = await db('select * from districts');
+        if (data) {
+	        res.json({ code: 0, data, message: '' });
+        } else {
+	        res.json({ code: -1, data: null, message: '数据不存在' });
+        }
+    } catch (e) {
+        res.json({code: -1, data: null, message: e});
+    }
+});
 
 // 配置模板引擎
 server.engine('html',consolidate.ejs);

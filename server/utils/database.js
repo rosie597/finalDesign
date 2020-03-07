@@ -4,8 +4,8 @@ const mysql=require('mysql');
 const db=mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: '123456',
-    database: 'soms'
+    password: '666666',
+    database: 'final_design'
 });
 
 module.exports = (sql, callback) => {

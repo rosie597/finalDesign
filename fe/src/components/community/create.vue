@@ -151,8 +151,8 @@ export default {
     		slogan: '',
     		logo: ''
     	},
-    	districts: ['大学城', '东风路', '龙洞', '番禺'],
-    	types: ['111', '222'],
+    	districts: [],
+    	types: [],
     	rules1: {
 	    	name: [
 	    		{ required: true, message: '请输入活动名', trigger: 'blur' }
@@ -198,6 +198,20 @@ export default {
     toLast() {
     	this.active--;
     },
+    getDistricts () {
+    	this.$axios.get('/districts').then(res => {
+    		this.districts = res.data.data
+    	}).catch(err => {
+    		console.log(err)
+    	})
+    },
+    getCommunityTypes () {
+    	this.$axios.get('/backend/community/types').then(res => {
+    		this.types = res.data.data
+    	}).catch(err => {
+    		console.log(err)
+    	})
+    },
     submitForm() {
     	// TODO: 提交表单操作
     	this.active = this.CREATE_STATUS.success;
@@ -206,16 +220,20 @@ export default {
     toCreate() {
     	this.active = this.CREATE_STATUS.base_info;
     	this.queryForm = {
-			type: '',
-			district: '',
-			name: '',
-			place: '',
-			time: '',
-			sponsor: '',
-			phone: '',
-			logo: ''
-		};
+    		district: '',
+    		type: '',
+    		name: '',
+    		desc: '',
+    		sponsor: '',
+    		phone: '',
+    		slogan: '',
+    		logo: ''
+    	};
     }
+  },
+  mounted () {
+  	this.getDistricts();
+  	this.getCommunityTypes();
   }
 };
 </script>

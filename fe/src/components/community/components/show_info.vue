@@ -128,8 +128,8 @@
 	    		district: '龙洞',
 	    		type: '222'
 	    	},
-	    	districts: ['大学城', '东风路', '龙洞', '番禺'],
-	    	types: ['111', '222']
+	    	districts: [],
+	    	types: []
 	    };
 	  },
 	  methods: {
@@ -140,7 +140,25 @@
 	  			// 保存操作
 	  			this.status = 'show';
 	  		}
-	  	}
+	  	},
+	  	getDistricts () {
+	    	this.$axios.get('/districts').then(res => {
+	    		this.districts = res.data.data
+	    	}).catch(err => {
+	    		console.log(err)
+	    	})
+	    },
+	    getCommunityTypes () {
+	    	this.$axios.get('/backend/community/types').then(res => {
+	    		this.types = res.data.data
+	    	}).catch(err => {
+	    		console.log(err)
+	    	})
+	    },
+	  },
+	  mounted () {
+	  	this.getDistricts();
+	  	this.getCommunityTypes();
 	  }
 	};
 </script>

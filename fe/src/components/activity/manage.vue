@@ -1,4 +1,7 @@
 <style scoped>
+.container h1 {
+  padding: 20px 0;
+}
 </style>
 
 <template>
@@ -9,13 +12,13 @@
 	    <el-input v-model="queryForm.name" placeholder="活动名"></el-input>
 	  </el-form-item>
 	  <el-form-item label="活动区域">
-	    <el-select v-model="queryForm.region">
+	    <el-select v-model="queryForm.district">
 	      <el-option v-for="item in districts" :key="item" :label="item" :value="item"></el-option>
 	    </el-select>
 	  </el-form-item>
 	  <el-form-item label="活动类型">
 	    <el-select v-model="queryForm.type">
-    		<el-option v-for="item in types" :key="item" :label="item" :value="item"></el-option>
+    		<el-option v-for="item in activityType" :key="item" :label="item" :value="item"></el-option>
 	    </el-select>
 	  </el-form-item>
 	  <el-form-item>
@@ -43,7 +46,7 @@
 	      width="150">
 	      <template slot-scope="scope">
 	        <el-button @click="viewActivity(scope.row)" type="text" size="small">查看</el-button>
-	        <el-button @click="finishActivity(scope.row)" type="text" size="small">下架</el-button>
+	        <el-button @click="finishActivity(scope.row)" type="text" size="small">结束</el-button>
 	        <el-button @click="deleteActivity(scope.row)" type="text" size="small">删除</el-button>
 	      </template>
 	    </el-table-column>
@@ -52,7 +55,7 @@
 	<el-pagination
 	  layout="prev, pager, next"
 	  :total="totalPage"
-	  :page-size="pageSize"
+	  :page-size="limit"
 	  @current-change="queryData">
 	</el-pagination>
   </div>
@@ -63,25 +66,16 @@ export default {
   name: 'ActivityManage',
   data() {
     return {
+      limit: 10,
     	queryForm: {
     		name: '',
-    		region: '',
+    		district: '',
     		type: ''
     	},
-    	districts: ['大学城', '东风路', '龙洞', '番禺'],
-    	types: [111, 222],
-    	queryList: [
-    		{
-    			name: '测试活动',
-    			region: '大学城',
-    			time: '2019-12-30 14:30',
-    			type: '组织性',
-    			sponsor: '刘德华',
-    			phone: 1318888888,
-    			create_time: '2019-11-28 18:00:01',
-    			status: 2
-    		}
-    	],
+    	districts: [],
+      activityType: {},
+      activityStatus: {},
+    	queryList: [],
     	// 表格的列配置
     	tableColumnConfig: [
     		{
@@ -90,7 +84,7 @@ export default {
     			label: '活动名称'
     		},
     		{
-    			row: 'region',
+    			row: 'district',
     			width: 120,
     			label: '活动区域'
     		},
@@ -125,27 +119,80 @@ export default {
     			label: '当前状态'
     		},
     	],
-    	totalPage: 1000,
-    	pageSize: 10,
+    	totalPage: 1000
     };
   },
   methods: {
-  	queryData(page) {
-  		let p = page || 0;
-  		// 查询列表
-  	},
+  	queryData (page) {
+      let p = (typeof page === 'number') ? page : 1;
+      let d = this.queryForm;
+      d.limit = this.limit;
+      d.offset = (p - 1) * this.limit;
+      this.$axios({
+        url: '/backend/activity/list',
+        method: 'post',
+        d
+      }).then(res => {
+         this.queryList = res.data.data;
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    getDistricts () {
+      this.$axios.get('/districts').then(res => {
+        this.districts = res.data.data;
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    getActivityactivityType () {
+      this.$axios.get('/backend/activity/types').then(res => {
+        this.activityType = res.data.data;
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    getActivityStatus () {
+      this.$axios.get('/backend/activity/status').then(res => {
+        this.activityStatus = res.data.data;
+      }).catch(err => {
+        console.log(err)
+      })
+    },
   	viewActivity(item) {
-
+      // 跳转到详情页
   	},
   	finishActivity(item) {
-  		
+      let _this = this;
+  		this.$axios.get(`/backend/activity/finish?id=${item.id}`).then(res => {
+        // TODO: 返回码的判断
+        _this.$message({
+          message: '操作成功',
+          type: 'success'
+        });
+        _this.queryData(this.page);
+      }).catch(err => {
+        console.log(err)
+      })
   	},
   	deleteActivity(item) {
-
+      let _this = this;
+      this.$axios.get(`/backend/activity/delete?id=${item.id}`).then(res => {
+        // TODO: 返回码的判断
+        _this.$message({
+          message: '删除成功',
+          type: 'success'
+        });
+        _this.queryData(this.page);
+      }).catch(err => {
+        console.log(err)
+      })
   	}
   },
   mounted() {
-  	this.queryData(0);
+  	this.queryData(1);
+    this.getActivityactivityType();
+    this.getDistricts();
   }
 };
 </script>

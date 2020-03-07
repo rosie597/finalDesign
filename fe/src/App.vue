@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <top-header></top-header>
     <el-container>
         <el-aside width="250px">
+          <div class="top-logo"></div>
           <div class="directory">
             <el-col :span="24">
               <h5>目录</h5>
@@ -49,6 +49,7 @@
           </div>
         </el-aside>
         <el-container>
+          <top-header></top-header>
           <el-main>
             <div class="main">
               <keep-alive>
@@ -80,10 +81,15 @@ export default {
     padding: 0;
     margin: 30px;
   }
+  .top-logo {
+    height: 48px;
+    background: blue;
+  }
   .directory {
     width: 100%;
+    margin-top: 20px;
   }
   .el-container {
-    padding-top: 15px;
+    /*padding-top: 15px;*/
   }
 </style>

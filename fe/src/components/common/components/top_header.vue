@@ -1,6 +1,6 @@
 <style>
 	.header-ctn {
-		width: 100%;
+		width: calc(100vw - 250px);
 	    height: 48px;
 	    border-bottom: 1px solid #ccc;
 	    position: fixed;
@@ -10,6 +10,7 @@
 	    display: flex;
 	    flex-direction: row;
 	    align-items: center;
+	    justify-content: flex-end;
 	}
 	.header-ctn img {
 		height: 32px;
@@ -17,6 +18,12 @@
 		border-radius: 50%;
 		margin-left: 20px;
 		margin-right: 15px;
+	}
+	.info {
+		margin-right: 20px;
+	}
+	.btn-ctn {
+		margin-right: 20px;
 	}
 	.el-button {
 		height: 32px;
@@ -40,6 +47,8 @@
 <template>
 	<div class="header-ctn">
 		<div class="info" v-if="isLogin">
+			<span>{{userName}}</span>
+
 			<el-dropdown @command="handleCommand">
 			  <span class="el-dropdown-link">
 			    <img :src="avatar" alt="头像" />
@@ -49,8 +58,6 @@
 			    <el-dropdown-item command="logout">注销登陆</el-dropdown-item>
 			  </el-dropdown-menu>
 			</el-dropdown>
-			
-			<span>{{userName}}</span>
 		</div>
 		<div class="btn-ctn" v-if="!isLogin">
 			<el-button type="primary" @click="loginFormVisible = true">登 陆</el-button>

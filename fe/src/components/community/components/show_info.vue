@@ -28,11 +28,11 @@
   	<div class="form-ctn">
   		<el-form v-if="status === 'edit'" label-width="100px">
 			<el-form-item label="组织名称">
-				<el-input v-model="queryList.name" placeholder="请输入名称"></el-input>
+				<el-input v-model="queryData.name" placeholder="请输入名称"></el-input>
 			</el-form-item>
 
 			<el-form-item label="校区">
-				<el-select v-model="queryList.district" placeholder="请选择">
+				<el-select v-model="queryData.district" placeholder="请选择">
 				    <el-option
 				      v-for="item in districts"
 				      :key="item"
@@ -43,7 +43,7 @@
 			</el-form-item>
 			
 			<el-form-item label="组织类型">
-				<el-select v-model="queryList.type" placeholder="请选择">
+				<el-select v-model="queryData.type" placeholder="请选择">
 				    <el-option
 				      v-for="item in types"
 				      :key="item"
@@ -58,7 +58,7 @@
 				  type="textarea"
 				  :autosize="{ minRows: 2, maxRows: 6}"
 				  placeholder="社团简介不少于200字"
-				  v-model="queryList.desc">
+				  v-model="queryData.desc">
 				</el-input>
 			</el-form-item>
 
@@ -79,7 +79,7 @@
 				  type="textarea"
 				  :autosize="{ minRows: 2, maxRows: 6}"
 				  placeholder="请输入 slogan"
-				  v-model="queryList.slogan">
+				  v-model="queryData.slogan">
 				</el-input>
 			</el-form-item>
 	    </el-form>
@@ -88,27 +88,27 @@
     <div v-if="status === 'show'">
     	<div class="show-item">
     		<span>组织名称: </span>
-    		<span>{{queryList.name}}</span>
+    		<span>{{queryData.name}}</span>
     	</div>
     	<div class="show-item">
     		<span>组织类型: </span>
-    		<span>{{queryList.type}}</span>
+    		<span>{{queryData.type}}</span>
     	</div>
     	<div class="show-item">
     		<span>组织校区: </span>
-    		<span>{{queryList.district}}</span>
+    		<span>{{queryData.district}}</span>
     	</div>
     	<div class="show-item">
     		<span>组织简介: </span>
-    		<span>{{queryList.desc}}</span>
+    		<span>{{queryData.desc}}</span>
     	</div>
     	<div class="show-item">
     		<span>组织logo: </span>
-    		<img :src="queryList.logo">
+    		<img :src="queryData.logo">
     	</div>
     	<div class="show-item">
     		<span>组织slogan: </span>
-    		<span>{{queryList.slogan}}</span>
+    		<span>{{queryData.slogan}}</span>
     	</div>
     </div>
   </div>
@@ -117,16 +117,17 @@
 <script>
 	export default {
 	  name: 'ShowInfo',
+	  props: ['id'],
 	  data() {
 	    return {
 	    	status: 'show',
-	    	queryList: {
-	    		logo: '1111.jpg',
-	    		slogan: 'we do chicken first',
-	    		name: '大家的社团',
-	    		desc: 'f会丢撒回复i啊后的归热火求湖人队回复i',
-	    		district: '龙洞',
-	    		type: '222'
+	    	queryData: {
+	    		logo: '',
+	    		slogan: '',
+	    		name: '',
+	    		desc: '',
+	    		district: '',
+	    		type: ''
 	    	},
 	    	districts: [],
 	    	types: []
@@ -155,10 +156,41 @@
 	    		console.log(err)
 	    	})
 	    },
+	    queryInfo (id) {
+	      let _this = this;
+	      this.$axios({
+	        url: '/backend/community/list',
+	        method: 'post',
+	        data: {
+	        	id
+	        }
+	      }).then(res => {
+	        if (res.data.code == 0) {
+	          let data = res.data.data[0];
+	          data.type = _this.types[data.type];
+	          data.district = _this.districts[data.district];
+	          _this.queryData = data;
+	        } else {
+	          _this.$message({
+	            type: 'error',
+	            message: res.data.message
+	          })
+	        }
+	      }).catch(err => {
+	        _this.$message({
+	          type: 'error',
+	          message: '请求错误'
+	        })
+	      })
+	    }
 	  },
-	  mounted () {
+	  created() {
 	  	this.getDistricts();
 	  	this.getCommunityTypes();
+	  },
+	  mounted () {
+	  	console.log(this.id)
+	  	this.queryInfo(this.id);
 	  }
 	};
 </script>

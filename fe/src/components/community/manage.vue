@@ -13,16 +13,16 @@
 	  </el-form-item>
 	  <el-form-item label="组织区域">
 	    <el-select v-model="queryForm.region">
-	      <el-option v-for="item in districts" :key="item" :label="item" :value="item"></el-option>
+	      <el-option v-for="(item, key) in districts" :key="item" :label="item" :value="key">{{item}}</el-option>
 	    </el-select>
 	  </el-form-item>
 	  <el-form-item label="组织类型">
 	    <el-select v-model="queryForm.type">
-    		<el-option v-for="item in types" :key="item" :label="item" :value="item"></el-option>
+    		<el-option v-for="(item, key) in types" :key="item" :label="item" :value="key">{{item}}</el-option>
 	    </el-select>
 	  </el-form-item>
 	  <el-form-item>
-	    <el-button type="primary" @click="queryData(0)">查询</el-button>
+	    <el-button type="primary" @click="queryData(1)">查询</el-button>
 	  </el-form-item>
 	</el-form>
 
@@ -43,10 +43,10 @@
 	      label="操作"
 	    >
 	      <template slot-scope="scope">
-	        <router-link :to="{ name: 'communitySetup', params: { data: scope.row } }">
+	        <router-link :to="{ name: 'communitySetup', params: scope.row }">
 	        	<el-button type="text" size="small">编辑</el-button>
 	        </router-link>
-	        <el-button @click="switchStatus(scope.row)" type="text" size="small">{{scope.row.status ? '关闭' : '开启'}}</el-button>
+	        <el-button @click="deleteCommunity(scope.row)" type="text" size="small">删除</el-button>
 	      </template>
 	    </el-table-column>
 	  </el-table>
@@ -61,10 +61,6 @@
 </template>
 
 <script>
-let COM_STATUS = {
-	1: '开启',
-	0: '关闭'
-}
 export default {
   name: 'CommunityManage',
   data() {
@@ -74,10 +70,10 @@ export default {
     		region: '',
     		type: ''
       },
-    	districts: ['大学城', '东风路', '龙洞', '番禺'],
-    	types: [111, 222],
+    	districts: [],
+    	types: [],
     	queryList: [],
-    	totalPage: 1000,
+    	totalPage: 0,
     	limit: 10,
     	// 表格的列配置
     	tableColumnConfig: [
@@ -87,7 +83,7 @@ export default {
     			label: '组织名称'
     		},
     		{
-    			row: 'region',
+    			row: 'district',
     			width: 150,
     			label: '组织区域'
     		},
@@ -120,24 +116,67 @@ export default {
     };
   },
   methods: {
-  	switchStatus (item) {
-  		
+  	deleteCommunity (item) {
+  		let _this = this;
+      this.$axios.get(`/backend/community/delete?id=${item.id}`).then(res => {
+        if (res.data.code == 0) {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          _this.queryData(this.page);
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
+      }).catch(err => {
+        this.$message({
+          type: 'error',
+          message: '网络错误'
+        })
+      })
   	},
+
     getDistricts () {
       this.$axios.get('/districts').then(res => {
-        this.districts = res.data.data;
+        if (res.data.code == 0) {
+          this.districts = res.data.data;
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
       }).catch(err => {
-        console.log(err)
+        this.$message({
+          type: 'error',
+          message: '请求错误'
+        })
       })
     },
+
     getCommunityTypes () {
       this.$axios.get('/backend/community/types').then(res => {
-        this.types = res.data.data
+        if (res.data.code == 0) {
+          this.types = res.data.data;
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
       }).catch(err => {
-        console.log(err)
+        _this.$message({
+          type: 'error',
+          message: '请求错误'
+        })
       })
     },
+
     queryData (page) {
+      let _this = this;
       let p = (typeof page === 'number') ? page : 1;
       let data = this.queryForm;
       data.limit = this.limit;
@@ -147,16 +186,34 @@ export default {
         method: 'post',
         data
       }).then(res => {
-         this.queryList = res.data.data
+        if (res.data.code == 0) {
+          let list = res.data.data;
+          list.forEach(el => {
+            el.type = _this.types[el.type];
+            el.district = _this.districts[el.district];
+          })
+          _this.queryList = list;
+          _this.totalPage = res.data.total_page;
+        } else {
+          _this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
       }).catch(err => {
-        console.log(err)
+        _this.$message({
+          type: 'error',
+          message: '请求错误'
+        })
       })
     }
   },
-  mounted() {
-  	this.queryData(1);
+  created() {
     this.getDistricts();
     this.getCommunityTypes();
+  },
+  mounted() {
+    this.queryData(1);
   }
 };
 </script>

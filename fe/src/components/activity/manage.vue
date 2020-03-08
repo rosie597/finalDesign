@@ -6,23 +6,23 @@
 
 <template>
   <div class="container">
-  	<h1>组织管理</h1>
+  	<h1>活动管理</h1>
     <el-form :inline="true" :model="queryForm" class="demo-form-inline">
 	  <el-form-item label="活动名">
 	    <el-input v-model="queryForm.name" placeholder="活动名"></el-input>
 	  </el-form-item>
 	  <el-form-item label="活动区域">
 	    <el-select v-model="queryForm.district">
-	      <el-option v-for="item in districts" :key="item" :label="item" :value="item"></el-option>
+	      <el-option v-for="(item, key) in districts" :key="item" :label="item" :value="key">{{item}}</el-option>
 	    </el-select>
 	  </el-form-item>
 	  <el-form-item label="活动类型">
 	    <el-select v-model="queryForm.type">
-    		<el-option v-for="item in activityType" :key="item" :label="item" :value="item"></el-option>
+    		<el-option v-for="(item, key) in activityType" :key="item" :label="item" :value="key">{{item}}</el-option>
 	    </el-select>
 	  </el-form-item>
 	  <el-form-item>
-	    <el-button type="primary" @click="queryData(0)">查询</el-button>
+	    <el-button type="primary" @click="queryData(1)">查询</el-button>
 	    <!-- 暂定功能 -->
 	    <el-button type="primary" @click="">导出excel</el-button>
 	  </el-form-item>
@@ -72,10 +72,14 @@ export default {
     		district: '',
     		type: ''
     	},
-    	districts: [],
+    	districts: {},
       activityType: {},
       activityStatus: {},
-    	queryList: [],
+    	queryList: [{
+        id: 111,
+        name: '123',
+        district: '123'
+      }],
     	// 表格的列配置
     	tableColumnConfig: [
     		{
@@ -119,7 +123,7 @@ export default {
     			label: '当前状态'
     		},
     	],
-    	totalPage: 1000
+    	totalPage: 0
     };
   },
   methods: {
@@ -131,68 +135,143 @@ export default {
       this.$axios({
         url: '/backend/activity/list',
         method: 'post',
-        d
+        data: d
       }).then(res => {
-         this.queryList = res.data.data;
+        if (res.data.code == 0) {
+          let list = res.data.data;
+          list.forEach(el => {
+            el.status = this.activityStatus[el.status];
+            el.type = this.activityType[el.type];
+            el.district = this.districts[el.district];
+          })
+          this.queryList = list;
+          this.totalPage = res.data.total_page;
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
       }).catch(err => {
-        console.log(err)
+        this.$message({
+          type: 'error',
+          message: '网络错误'
+        })
       })
     },
+
     getDistricts () {
       this.$axios.get('/districts').then(res => {
-        this.districts = res.data.data;
+        if (res.data.code == 0) {
+          this.districts = res.data.data;
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
       }).catch(err => {
-        console.log(err)
+        this.$message({
+          type: 'error',
+          message: '网络错误'
+        })
       })
     },
+
     getActivityactivityType () {
       this.$axios.get('/backend/activity/types').then(res => {
-        this.activityType = res.data.data;
+        if (res.data.code == 0) {
+          this.activityType = res.data.data;
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
       }).catch(err => {
-        console.log(err)
+        this.$message({
+          type: 'error',
+          message: '网络错误'
+        })
       })
     },
+
     getActivityStatus () {
       this.$axios.get('/backend/activity/status').then(res => {
-        this.activityStatus = res.data.data;
+        if (res.data.code == 0) {
+          this.activityStatus = res.data.data;
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
       }).catch(err => {
-        console.log(err)
+        this.$message({
+          type: 'error',
+          message: '网络错误'
+        })
       })
     },
+
   	viewActivity(item) {
       // 跳转到详情页
   	},
+
   	finishActivity(item) {
       let _this = this;
+      console.log(item)
   		this.$axios.get(`/backend/activity/finish?id=${item.id}`).then(res => {
-        // TODO: 返回码的判断
-        _this.$message({
-          message: '操作成功',
-          type: 'success'
-        });
-        _this.queryData(this.page);
+        if (res.data.code == 0) {
+          this.$message({
+            type: 'success',
+            message: '操作成功'
+          })
+          _this.queryData(this.page);
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
       }).catch(err => {
-        console.log(err)
+        this.$message({
+          type: 'error',
+          message: '网络错误'
+        })
       })
   	},
+
   	deleteActivity(item) {
       let _this = this;
       this.$axios.get(`/backend/activity/delete?id=${item.id}`).then(res => {
-        // TODO: 返回码的判断
-        _this.$message({
-          message: '删除成功',
-          type: 'success'
-        });
-        _this.queryData(this.page);
+        if (res.data.code == 0) {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          _this.queryData(this.page);
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.data.message
+          })
+        }
       }).catch(err => {
-        console.log(err)
+        this.$message({
+          type: 'error',
+          message: '网络错误'
+        })
       })
   	}
   },
-  mounted() {
-  	this.queryData(1);
+  created() {
     this.getActivityactivityType();
     this.getDistricts();
+    this.getActivityStatus();
+  },
+  mounted() {
+    this.queryData(1);
   }
 };
 </script>

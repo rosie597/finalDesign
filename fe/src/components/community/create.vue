@@ -46,10 +46,10 @@
 	    		<el-form-item label="校区" prop="district">
 	    			<el-select v-model="queryForm.district" placeholder="请选择">
 					    <el-option
-					      v-for="item in districts"
+					      v-for="(item, index) in districts"
 					      :key="item"
 					      :label="item"
-					      :value="item">
+					      :value="index">
 					    </el-option>
 				    </el-select>
 	    		</el-form-item>
@@ -61,10 +61,10 @@
 	    		<el-form-item label="组织类型" prop="type">
 	    			<el-select v-model="queryForm.type" placeholder="请选择">
 					    <el-option
-					      v-for="item in types"
+					      v-for="(item, index) in types"
 					      :key="item"
 					      :label="item"
-					      :value="item">
+					      :value="index">
 					    </el-option>
 				    </el-select>
 	    		</el-form-item>
@@ -202,19 +202,43 @@ export default {
     	this.$axios.get('/districts').then(res => {
     		this.districts = res.data.data
     	}).catch(err => {
-    		console.log(err)
-    	})
+	        this.$message({
+	          type: 'error',
+	          message: '网络错误'
+	        })
+	    })
     },
     getCommunityTypes () {
     	this.$axios.get('/backend/community/types').then(res => {
     		this.types = res.data.data
     	}).catch(err => {
-    		console.log(err)
-    	})
+	        this.$message({
+	          type: 'error',
+	          message: '网络错误'
+	        })
+	    })
     },
     submitForm() {
-    	// TODO: 提交表单操作
-    	this.active = this.CREATE_STATUS.success;
+    	this.$axios({
+    		url: './backend/community/new',
+    		method: 'post',
+    		data: this.queryForm
+    	}).then(res => {
+    		if (res.data.code == 0) {
+		    	this.active = this.CREATE_STATUS.success;
+    		} else {
+    			this.$message({
+    				type: 'error',
+    				message: res.data.message
+    			})
+    		}
+    	}).catch(err => {
+	        this.$message({
+	          type: 'error',
+	          message: '网络错误'
+	        })
+	    })
+    	
     },
     // 继续新建
     toCreate() {

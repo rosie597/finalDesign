@@ -20,13 +20,13 @@
 		  <el-menu-item index="3">成员管理</el-menu-item>
 		</el-menu>
     	<div v-if="activeIndex === '1'">
-    		<show-info></show-info>
+    		<show-info :id="id"></show-info>
     	</div>
     	<div v-if="activeIndex === '2'">
-    		<basic-info></basic-info>
+    		<basic-info :id="id"></basic-info>
     	</div>
     	<div v-if="activeIndex === '3'">
-    		<enrolment-manage></enrolment-manage>
+    		<enrolment-manage :id="id"></enrolment-manage>
     	</div>
 	</div>
   </div>
@@ -48,6 +48,7 @@
 	  data() {
 	    return {
 	    	activeIndex: "1",
+	    	id: ''
 	    };
 	  },
 	  methods: {
@@ -55,8 +56,9 @@
 	        this.activeIndex = key
         }
 	  },
-	  mounted () {
-	  	console.log(this.$route.params.data)
+	  created() {
+	  	console.log(this.$route.params)
+	  	this.id = this.$route.params.id;
 	  }
 	};
 </script>

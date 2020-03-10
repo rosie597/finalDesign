@@ -23,5 +23,9 @@
 * node 启动服务在 server 目录下执行
 > npm run serve
 * 若端口占用则修改端口号重新启动服务即可
+### 六. 分支说明
+* master 分支上的代码目前是项目的总体框架，可以直接从 master 切分支进行开发
+* develop_rosie 分支是个人毕设的开发分支
+* 将来可能会先在 master 切出 develop_frame 分支，将 develop_rosie 分支 merge 到 master 中
 ### 五. 线上部署
 暂无，敬请期待

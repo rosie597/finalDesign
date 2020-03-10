@@ -22,6 +22,8 @@
 	.success {
 		text-align: center;
 		color: lightgreen;
+		margin-top: 68px;
+		margin-bottom: 88px;
 	}
 	.success i {
 		font-size: 56px;
@@ -51,7 +53,7 @@
 							      v-for="(item, key) in districts"
 							      :key="item"
 							      :label="item"
-							      :value="item">
+							      :value="key">
 							    </el-option>
 						    </el-select>
 			    		</el-form-item>
@@ -66,7 +68,7 @@
 							      v-for="(item, key) in activityType"
 							      :key="item"
 							      :label="item"
-							      :value="item">
+							      :value="key">
 							    </el-option>
 						    </el-select>
 			    		</el-form-item>
@@ -116,7 +118,7 @@
 							  type="textarea"
 							  :autosize="{ minRows: 2, maxRows: 6}"
 							  placeholder="活动简介不少于100字"
-							  v-model="queryForm.desc">
+							  v-model="queryForm.description">
 							</el-input>
 			    		</el-form-item>
 			    		<el-form-item label="活动内容介绍">
@@ -166,7 +168,9 @@
 					time: '',
 					sponsor: '',
 					phone: '',
-					rich_content: ''
+					rich_content: '',
+					description: '',
+					logo: ''
 				},
 				myConfig: {
 			      autoHeightEnabled: false,
@@ -184,6 +188,12 @@
 			    	],
 			    	type: [
 			    		{ required: true, message: '请选择活动类型', trigger: 'blur' }
+			    	],
+			    	place: [
+			    		{ required: true, message: '请输入活动地址', trigger: 'blur' }
+			    	],
+			    	time: [
+			    		{ required: true, message: '请选择活动时间', trigger: 'blur' }
 			    	]
 			    },
 			    rules2: {
@@ -222,21 +232,46 @@
 		    },
 		    getDistricts () {
 		    	this.$axios.get('/districts').then(res => {
-		    		this.districts = res.data.data
+		    		this.districts = res.data.data;
 		    	}).catch(err => {
-		    		console.log(err)
+		    		this.$message({
+			          type: 'error',
+			          message: '网络错误'
+			        })
 		    	})
 		    },
 		    getActivityTypes () {
 		    	this.$axios.get('/backend/activity/types').then(res => {
-		    		this.activityType = res.data.data
+		    		this.activityType = res.data.data;
 		    	}).catch(err => {
-		    		console.log(err)
+		    		this.$message({
+			          type: 'error',
+			          message: '网络错误'
+			        })
 		    	})
 		    },
 		    submitForm () {
-		    	// TODO: 提交表单操作
-		    	this.active = this.CREATE_STATUS.success;
+		    	let time = this.queryForm.time;
+		    	this.queryForm.time = time.getTime();
+		    	this.$axios({
+		    		url: './backend/activity/new',
+		    		method: 'post',
+		    		data: this.queryForm
+		    	}).then(res => {
+		    		if (res.data.code == 0) {
+				    	this.active = this.CREATE_STATUS.success;
+		    		} else {
+		    			this.$message({
+		    				type: 'error',
+		    				message: res.data.message
+		    			})
+		    		}
+		    	}).catch(err => {
+			        this.$message({
+			          type: 'error',
+			          message: '网络错误'
+			        })
+			    })
 		    },
 		    // 继续新建
 		    toCreate () {
@@ -249,7 +284,9 @@
 					time: '',
 					sponsor: '',
 					phone: '',
-					rich_content: ''
+					rich_content: '',
+					description: '',
+					logo: ''
 				};
 		    }
 		},

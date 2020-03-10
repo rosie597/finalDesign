@@ -54,7 +54,7 @@
 
 	<el-pagination
 	  layout="prev, pager, next"
-	  :total="totalPage"
+	  :page-count="totalPage"
 	  :page-size="limit"
 	  @current-change="queryData">
 	</el-pagination>
@@ -123,7 +123,7 @@ export default {
     			label: '当前状态'
     		},
     	],
-    	totalPage: 0
+    	totalPage: 1
     };
   },
   methods: {
@@ -143,9 +143,11 @@ export default {
             el.status = this.activityStatus[el.status];
             el.type = this.activityType[el.type];
             el.district = this.districts[el.district];
+            el.create_time = new Date(el.create_time).toLocaleDateString();
+            el.time = new Date(el.time).toLocaleDateString();
           })
           this.queryList = list;
-          this.totalPage = res.data.total_page;
+          this.totalPage = Number(res.data.total_page);
         } else {
           this.$message({
             type: 'error',

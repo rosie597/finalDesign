@@ -22,6 +22,8 @@
 	.success {
 		text-align: center;
 		color: lightgreen;
+		margin-top: 68px;
+		margin-bottom: 88px;
 	}
 	.success i {
 		font-size: 56px;
@@ -74,7 +76,7 @@
 					  type="textarea"
 					  :autosize="{ minRows: 2, maxRows: 6}"
 					  placeholder="社团简介不少于200字"
-					  v-model="queryForm.desc">
+					  v-model="queryForm.description">
 					</el-input>
 	    		</el-form-item>
 	    	</el-form>
@@ -145,7 +147,7 @@ export default {
     		district: '',
     		type: '',
     		name: '',
-    		desc: '',
+    		description: '',
     		sponsor: '',
     		phone: '',
     		slogan: '',
@@ -225,7 +227,7 @@ export default {
     		data: this.queryForm
     	}).then(res => {
     		if (res.data.code == 0) {
-		    	this.active = this.CREATE_STATUS.success;
+    			this.active = this.CREATE_STATUS.success;
     		} else {
     			this.$message({
     				type: 'error',
@@ -238,7 +240,6 @@ export default {
 	          message: '网络错误'
 	        })
 	    })
-    	
     },
     // 继续新建
     toCreate() {
@@ -247,7 +248,7 @@ export default {
     		district: '',
     		type: '',
     		name: '',
-    		desc: '',
+    		description: '',
     		sponsor: '',
     		phone: '',
     		slogan: '',

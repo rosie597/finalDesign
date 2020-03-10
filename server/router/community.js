@@ -63,11 +63,11 @@ router.post('/list', async (req, res) => {
  * 新增组织
  */
 router.post('/new', async (req, res) => {
-    let { district, type, name, desc, sponsor, phone, slogan, logo } = req.body;
-    let create_time = new Date();
+    let { district, type, name, description, sponsor, phone, slogan, logo } = req.body;
+    let create_time = new Date().getTime();
     try {
         // TODO: insert语句的语法有误
-        const data = await db(`INSERT INTO community_info(district,type,name,desc,sponsor,phone,slogan,logo,create_time) VALUES(${district || 0},${type || 0},${name || ''},${desc || ''},${sponsor || ''},${phone || ''},${slogan || ''},${logo || ''},${create_time})`);
+        const data = await db(`INSERT INTO community_info (district,type,name,description,sponsor,phone,slogan,logo,create_time) VALUE (${district || 0},${type || 0},'${name || ''}','${description || ''}','${sponsor || ''}','${phone || ''}','${slogan || ''}','${logo || ''}',${create_time})`);
         if (data.affectedRows) {
             res.json({ code: 0,data, message: '' });
         } else {
@@ -85,7 +85,6 @@ router.get('/delete', async (req, res) => {
     let id = req.query.id;
     try {
         const data = await db(`DELETE FROM community_info WHERE id=${id}`);
-        console.log(data.affectedRows)
         if (data.affectedRows) {
             res.json({ code: 0, data, message: '' });
         } else {

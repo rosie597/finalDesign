@@ -58,7 +58,7 @@
 				  type="textarea"
 				  :autosize="{ minRows: 2, maxRows: 6}"
 				  placeholder="社团简介不少于200字"
-				  v-model="queryData.desc">
+				  v-model="queryData.description">
 				</el-input>
 			</el-form-item>
 
@@ -100,7 +100,7 @@
     	</div>
     	<div class="show-item">
     		<span>组织简介: </span>
-    		<span>{{queryData.desc}}</span>
+    		<span>{{queryData.description}}</span>
     	</div>
     	<div class="show-item">
     		<span>组织logo: </span>
@@ -125,7 +125,7 @@
 	    		logo: '',
 	    		slogan: '',
 	    		name: '',
-	    		desc: '',
+	    		description: '',
 	    		district: '',
 	    		type: ''
 	    	},

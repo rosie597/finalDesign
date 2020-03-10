@@ -77,7 +77,6 @@ router.get('/delete', async (req, res) => {
     let id = req.query.id;
     try {
         const data = await db(`DELETE FROM activity_info WHERE id=${id}`);
-        console.log(data.affectedRows)
         if (data.affectedRows) {
             res.json({ code: 0, data, message: '' });
         } else {
@@ -95,9 +94,27 @@ router.get('/finish', async (req, res) => {
     let id = req.query.id;
     try {
         const data = await db(`UPDATE activity_info SET status=2 WHERE id=${id}`);
-        console.log(data.affectedRows)
         if (data.affectedRows) {
             res.json({ code: 0, data, message: '' });
+        } else {
+            res.json({ code: -1, data: null, message: '数据不存在' });
+        }
+    } catch (e) {
+        res.json({code: -1, data: null, message: e});
+    }
+});
+
+/**
+ * 新增活动
+ */
+router.post('/new', async (req, res) => {
+    let { district, type, name, description, sponsor, phone, rich_content, logo, time, place } = req.body;
+    let create_time = new Date().getTime();
+    try {
+        // TODO: insert语句的语法有误
+        const data = await db(`INSERT INTO activity_info (create_time,district,type,name,description,sponsor,phone,rich_content,logo,time,place) VALUE ('${create_time}',${district || 0},${type || 0},'${name || ''}','${description || ''}','${sponsor || ''}','${phone || ''}','${rich_content || ''}','${logo || ''}','${time || ''}','${place || ''}')`);
+        if (data.affectedRows) {
+            res.json({ code: 0,data, message: '' });
         } else {
             res.json({ code: -1, data: null, message: '数据不存在' });
         }

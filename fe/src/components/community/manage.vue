@@ -53,7 +53,7 @@
 
 	  <el-pagination
 	    layout="prev, pager, next"
-	    :total="totalPage"
+	    :page-count="totalPage"
 	    :page-size="limit"
 	    @current-change="queryData">
 	  </el-pagination>
@@ -73,7 +73,7 @@ export default {
     	districts: [],
     	types: [],
     	queryList: [],
-    	totalPage: 0,
+    	totalPage: 1,
     	limit: 10,
     	// 表格的列配置
     	tableColumnConfig: [
@@ -191,9 +191,10 @@ export default {
           list.forEach(el => {
             el.type = _this.types[el.type];
             el.district = _this.districts[el.district];
+            el.create_time = new Date(el.create_time).toLocaleDateString();
           })
           _this.queryList = list;
-          _this.totalPage = res.data.total_page;
+          _this.totalPage = Number(res.data.total_page);
         } else {
           _this.$message({
             type: 'error',

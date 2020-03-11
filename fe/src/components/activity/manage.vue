@@ -81,48 +81,7 @@ export default {
         district: '123'
       }],
     	// 表格的列配置
-    	tableColumnConfig: [
-    		{
-    			row: 'name',
-    			width: 150,
-    			label: '活动名称'
-    		},
-    		{
-    			row: 'district',
-    			width: 120,
-    			label: '活动区域'
-    		},
-    		{
-    			row: 'type',
-    			width: 120,
-    			label: '活动类型'
-    		},
-    		{
-    			row: 'time',
-    			width: 120,
-    			label: '活动时间'
-    		},
-    		{
-    			row: 'sponsor',
-    			width: 120,
-    			label: '负责人'
-    		},
-    		{
-    			row: 'phone',
-    			width: 120,
-    			label: '负责人手机'
-    		},
-    		{
-    			row: 'create_time',
-    			width: 120,
-    			label: '创建时间'
-    		},
-    		{
-    			row: 'status',
-    			width: 120,
-    			label: '当前状态'
-    		},
-    	],
+    	tableColumnConfig: this.ACTIVITY_TABLE_CONFIG,
     	totalPage: 1
     };
   },

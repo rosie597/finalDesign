@@ -26,15 +26,15 @@ router.get('/types', async (req, res) => {
 /**
  * 组织列表
  */
- // TODO: 分页
 router.post('/list', async (req, res) => {
     try {
         let { offset, limit, name, district, type, id } = req.body;
         let sqlStr = `SELECT * FROM community_info WHERE 1=1`; // 保证没有条件时依然可查询
         // 总条目查询
-        let totalData = await db(`SELECT COUNT(*) from community_info`);
+        let totalData = await db(`SELECT COUNT(*) from community_info WHERE 1=1`);
         let total_page = Math.ceil(totalData[0]['COUNT(*)'] / +limit);
         if (id) {
+            // 查询特定社团
             sqlStr = `${sqlStr} AND id=${id}`;
         } else {
             if (name) {

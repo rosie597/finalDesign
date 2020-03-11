@@ -1,4 +1,7 @@
 <style scoped>
+	h1 {
+		margin-bottom: 20px;
+	}
 	.btn-ctn {
 		position: absolute;
 	    right: 50px;
@@ -27,14 +30,11 @@
   <div class="container">
   	<h1>职务设置</h1>
     <el-form :inline="true" :model="jobItem" class="demo-form-inline">
-	  <el-form-item label="职务">
-        <el-input v-model="jobItem.job" placeholder="职务"></el-input>
-	  </el-form-item>
 	  <el-form-item label="名字">
 	    <el-input v-model="jobItem.name" placeholder="名字"></el-input>
 	  </el-form-item>
-	  <el-form-item label="手机">
-	    <el-input v-model="jobItem.phone" placeholder="手机"></el-input>
+	  <el-form-item label="职务">
+        <el-input v-model="jobItem.job" placeholder="职务"></el-input>
 	  </el-form-item>
 	  <el-form-item>
 	    <el-button type="primary" @click="newJob()">新增</el-button>

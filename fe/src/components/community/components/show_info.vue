@@ -189,7 +189,6 @@
 	  	this.getCommunityTypes();
 	  },
 	  mounted () {
-	  	console.log(this.id)
 	  	this.queryInfo(this.id);
 	  }
 	};

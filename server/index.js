@@ -43,6 +43,23 @@ server.use('/districts', async (req, res) => {
     }
 });
 
+/**
+ * 学院表信息
+ */
+server.use('/academics', async (req, res) => {
+    try {
+        const { id } = req.query;
+        const [ data ] = await db('select * from academy_map');
+        if (data) {
+          res.json({ code: 0, data, message: '' });
+        } else {
+          res.json({ code: -1, data: null, message: '数据不存在' });
+        }
+    } catch (e) {
+        res.json({code: -1, data: null, message: e});
+    }
+});
+
 // 配置模板引擎
 server.engine('html',consolidate.ejs);
 server.set('view engine','html');

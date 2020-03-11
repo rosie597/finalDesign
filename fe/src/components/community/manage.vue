@@ -43,9 +43,7 @@
 	      label="操作"
 	    >
 	      <template slot-scope="scope">
-	        <router-link :to="{ name: 'communitySetup', params: scope.row }">
-	        	<el-button type="text" size="small">编辑</el-button>
-	        </router-link>
+	        	<el-button type="text" size="small" @click="toEditPage(scope.row)">编辑</el-button>
 	        <el-button @click="deleteCommunity(scope.row)" type="text" size="small">删除</el-button>
 	      </template>
 	    </el-table-column>
@@ -72,47 +70,11 @@ export default {
       },
     	districts: [],
     	types: [],
-    	queryList: [],
+    	queryList: [{id: 111},{id: 222}],
     	totalPage: 1,
     	limit: 10,
     	// 表格的列配置
-    	tableColumnConfig: [
-    		{
-    			row: 'name',
-    			width: 150,
-    			label: '组织名称'
-    		},
-    		{
-    			row: 'district',
-    			width: 150,
-    			label: '组织区域'
-    		},
-    		{
-    			row: 'type',
-    			width: 120,
-    			label: '组织类型'
-    		},
-    		{
-    			row: 'enrolment',
-    			width: 120,
-    			label: '组织人数'
-    		},
-    		{
-    			row: 'sponsor',
-    			width: 150,
-    			label: '负责人'
-    		},
-    		{
-    			row: 'phone',
-    			width: 150,
-    			label: '负责人手机'
-    		},
-    		{
-    			row: 'create_time',
-    			width: 180,
-    			label: '创建时间'
-    		},
-    	]
+    	tableColumnConfig: this.COMMUNITY_TABLE_CONFIG
     };
   },
   methods: {
@@ -168,7 +130,7 @@ export default {
           })
         }
       }).catch(err => {
-        _this.$message({
+        this.$message({
           type: 'error',
           message: '请求错误'
         })
@@ -202,11 +164,15 @@ export default {
           })
         }
       }).catch(err => {
-        _this.$message({
+        this.$message({
           type: 'error',
           message: '请求错误'
         })
       })
+    },
+
+    toEditPage(data) {
+      this.$router.push({ path: '/community/setup', query: data });
     }
   },
   created() {

@@ -53,7 +53,7 @@
           <el-main>
             <div class="main">
               <keep-alive>
-                <router-view/>
+                <router-view :key="$route.path + $route.query.id"/>
               </keep-alive>
             </div>
           </el-main>

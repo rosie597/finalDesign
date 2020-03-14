@@ -5,17 +5,29 @@ const c_session=require('cookie-session'); // session 基于 cookie
 const consolidate=require('consolidate');
 const bodyParser = require('body-parser');
 const db = require('./utils/database');
+const multer=require('multer'); //可以解析multipart/form-data类型数据
+const pathLib=require('path');
+const fs=require('fs');
 
-var server=express();
+const multerObj=multer({dest:'./upload/'});
+
+const server=express();
 server.listen(8883);
 
 // cookie签名加密验证
 server.use(c_parser('djfaisdhfiu'));
 server.use(c_session({
-	name:'session1',
-	keys:['asdf','fasf','greasd','asfae'],
-	maxAge:2000000
+	// name:'session1',
+	// keys:['asdf','fasf','greasd','asfae'],
+	// maxAge:2000000
+  secret: 'aaa',
+  resave: false, //保存session值
+  saveUninitialized: true, //设置session cookie
+  cookie: { maxAge: 7200 * 1000 },//设置有效期
 }));
+
+//文件上传
+server.use(multerObj.any());
 
 // post 数据
 server.use(bodyParser.json());
@@ -25,6 +37,19 @@ server.use(bodyParser.urlencoded({ extended: true }));
 server.use('/backend/user', require(__dirname + '/router/user'));
 server.use('/backend/community', require(__dirname + '/router/community'));
 server.use('/backend/activity', require(__dirname + '/router/activity'));
+
+// 图片上传储存并返回路径
+server.post('/img/upload',function(req, res){
+  console.log(req.files)
+  var newName = req.files[0].originalname
+  fs.rename(req.files[0].path, newName, function(err){
+    if(err){
+      res.json({message:'上传失败', data:null, code: -1})
+    }else{
+      res.json({message:'上传成功', data:`/upload/${newName}`, code: 0})
+    }
+  })
+});
 
 /**
  * 学校区域信息
@@ -44,7 +69,7 @@ server.use('/districts', async (req, res) => {
 });
 
 /**
- * 学院表信息
+ * 学院
  */
 server.use('/academics', async (req, res) => {
     try {

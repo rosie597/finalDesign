@@ -7,35 +7,68 @@ const db = require('../utils/database');
 const upload = require('../utils/multer');
 
 /**
- * 获取用户基本信息
+ * 登陆
  */
-router.get('/info', async (req, res) => {
-    res.json({ code: 0, data: 'abcd', message: 'ok' });
-    // try {
-    //     const { id } = req.query;
-    //     const [data] = await db('select * from tour_user where id="' + id + '"');
-    //     if (data) {
-    //     res.json({ code: 0, data, message: '' });
-    //     } else {
-    //     res.json({ code: -1, data: null, message: '用户不存在' });
-    //     }
-    // } catch (e) {
-    //     res.json({code: -1, data: null, message: e});
-    // }
+router.post('/login', async (req, res) => {
+    let { account, password } = req.body;
+    if (!account || !password) {
+        res.json({ code: -1, data: null, message: '数据不可以为空' })
+    } else {
+        try {
+            const [ data ] = await db(`select * from user_info where account='${account}'`);
+            if (data) {
+                req.session.login = true;
+                req.session.user = account;
+                res.json({ code: 0, data, message: '登陆成功' });
+            } else {
+                res.json({ code: -1, data: null, message: '账号不存在' });
+            }
+        } catch (e) {
+            res.json({code: -1, data: null, message: e});
+        }
+    }
 });
 
 /**
- * 用户注册信息上传
+ * 用户注册
  */
-router.post('/register', async (req, res) => {
-    console.log(req.body);
-    res.json({ code: 0, data: 'abcd', message: 'ok' });
+router.post('/regist', async (req, res) => {
+    let { account, password, number } = req.body;
+    if (!account || !password) {
+        res.json({ code: -1, data: null, message: '数据不可以为空' })
+    } else {
+        try {
+            const [ data ] = await db(`SELECT * FROM user_info WHERE account='${account}'`);
+            if (!data) {
+                const data = await db(`INSERT INTO user_info (account,password,number) VALUE ('${account}','${password}','${number}')`);
+                if (data.affectedRows) {
+                    res.json({ code: 0, data, message: '' });
+                } else {
+                    res.json({ code: -1, data: null, message: '注册失败，请重试' });
+                }
+            } else {
+                res.json({ code: -1, data: null, message: '账号已经存在' });
+            }
+        } catch (e) {
+            res.json({code: -1, data: null, message: e});
+        }
+    }
 });
+
+/**
+ * 注销登陆
+ */
+router.get('/logout', (req, res)=>{
+    req.session.login = false;
+    req.session.user = '';
+    res.json({ code: 0, message:'已退出' });
+})
 
 /**
  * 社团成员列表
  */
 router.post('/list', async (req, res) => {
+    console.log(req.session.login)
     try {
         let { offset, limit, community_id, name, number, id } = req.body;
         let sqlStr = `SELECT * FROM member_info WHERE 1=1`; // 保证没有条件时依然可查询

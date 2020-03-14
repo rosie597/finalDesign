@@ -66,8 +66,8 @@
 
 		<el-dialog title="登 陆" :visible.sync="loginFormVisible">
 		  <el-form label-position="left" :rules="loginRules" :model="loginForm" ref="loginForm">
-		    <el-form-item label="账号名" :label-width="formLabelWidth" prop="name">
-		      <el-input v-model="loginForm.name"></el-input>
+		    <el-form-item label="手机号" :label-width="formLabelWidth" prop="account">
+		      <el-input v-model="loginForm.account"></el-input>
 		    </el-form-item>
 		    <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
 		      <el-input v-model="loginForm.password" type="password"></el-input>
@@ -81,11 +81,11 @@
 		
 		<el-dialog title="账 号 注 册" :visible.sync="registFormVisible">
 		  <el-form label-position="left" :rules="registRules" :model="registForm" ref="registForm">
-		    <el-form-item label="账号名" :label-width="formLabelWidth" prop="name">
-		      <el-input v-model="registForm.name"></el-input>
+		    <el-form-item label="手机号" :label-width="formLabelWidth" prop="account">
+		      <el-input v-model="registForm.account"></el-input>
 		    </el-form-item>
-		    <el-form-item label="学号/工号" :label-width="formLabelWidth" prop="identityNum">
-		      <el-input v-model="registForm.identityNum"></el-input>
+		    <el-form-item label="学号/工号" :label-width="formLabelWidth" prop="number">
+		      <el-input v-model="registForm.number"></el-input>
 		    </el-form-item>
 		    <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
 		      <el-input v-model="registForm.password" type="password"></el-input>
@@ -122,33 +122,30 @@
 		        registFormVisible: false,
 		        password2: '',
 		        registForm: {
-		        	name: '',
+		        	account: '',
 		        	password: '',
-		        	identityNum: '',
+		        	number: '',
 		        	password2: ''
 		        },
 		        loginForm: {
-		        	name: '',
+		        	account: '',
 		        	password: ''
 		        },
 		        formLabelWidth: '110px',
 		        loginRules: {
-		        	name: [
-		        		{ required: true, message: '请输入账号名', trigger: 'blur' }
+		        	account: [
+		        		{ required: true, message: '请输入手机号', trigger: 'blur' }
 		        	],
 		        	password: [
 		        		{ required: true, message: '请输入密码', trigger: 'blur' }
 		        	]
 		        },
 		        registRules: {
-		        	name: [
-		        		{ required: true, message: '请输入账号名', trigger: 'blur' }
+		        	account: [
+		        		{ required: true, message: '请输入手机号', trigger: 'blur' }
 		        	],
 		        	password: [
 		        		{ required: true, message: '请输入密码', trigger: 'blur' }
-		        	],
-		        	identityNum: [
-		        		{ required: true, message: '请输入学号/工号', trigger: 'blur' }
 		        	],
 		        	password2: [
 			        	{ required: true, message: '请再次输入密码', trigger: 'blur' },
@@ -161,23 +158,94 @@
 			handleCommand(command) {
 				// 注销登陆
 				if (command === 'logout') {
-					this.isLogin = false
+					this.logout();
 				}
 			},
 			login() {
+				let _this = this;
 				this.$refs['loginForm'].validate((valid) => {
 					if (valid) {
-						// 校验通过
-					} else {
+				      this.$axios({
+				        method: 'post',
+				        url: '/backend/user/login',
+				        data: this.loginForm
+				      }).then(res => {
+				        if (res.data.code == 0) {
+				          _this.$message({
+				            type: 'success',
+				            message: '登陆成功'
+				          });
+				          _this.loginFormVisible = false;
+				          _this.isLogin = true;
+				        } else {
+				          _this.$message({
+				            type: 'error',
+				            message: res.data.message
+				          })
+				        }
+				      }).catch(err => {
+				        this.$message({
+				          type: 'error',
+				          message: err.data.message
+				        })
+				      })
 					}
 				})
 			},
+
 			regist() {
 				this.$refs['registForm'].validate((valid) => {
 					if (valid) {
-					} else {
+				      this.$axios({
+				        method: 'post',
+				        url: '/backend/user/regist',
+				        data: this.registForm
+				      }).then(res => {
+				        if (res.data.code == 0) {
+				          _this.$message({
+				            type: 'success',
+				            message: '注册成功'
+				          });
+				          _this.registFormVisible = false;
+				        } else {
+				          _this.$message({
+				            type: 'error',
+				            message: res.data.message
+				          })
+				        }
+				      }).catch(err => {
+				        this.$message({
+				          type: 'error',
+				          message: err.data.message
+				        })
+				      })
 					}
 				})
+			},
+
+			logout() {
+			  this.$axios({
+		        method: 'get',
+		        url: '/backend/user/logout'
+		      }).then(res => {
+		        if (res.data.code == 0) {
+		          _this.$message({
+		            type: 'success',
+		            message: '注销成功'
+		          });
+		          _this.isLogin = false;
+		        } else {
+		          _this.$message({
+		            type: 'error',
+		            message: res.data.message
+		          })
+		        }
+		      }).catch(err => {
+		        this.$message({
+		          type: 'error',
+		          message: '请重试'
+		        })
+		      })
 			}
 		}
 	}

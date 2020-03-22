@@ -6,6 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import './assets/css/common.css';
 import App from './App';
 import router from './router';
+import store from './store';
 import config from './lib/config/config.js';
 
 // Vue.config.productionTip = false;
@@ -18,6 +19,7 @@ Vue.prototype.qs = qs;
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 });

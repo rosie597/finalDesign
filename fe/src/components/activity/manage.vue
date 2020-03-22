@@ -6,64 +6,72 @@
 
 <template>
   <div class="container">
-  	<h1>活动管理</h1>
-    <el-form :inline="true" :model="queryForm" class="demo-form-inline">
-	  <el-form-item label="活动名">
-	    <el-input v-model="queryForm.name" placeholder="活动名"></el-input>
-	  </el-form-item>
-	  <el-form-item label="活动区域">
-	    <el-select v-model="queryForm.district">
-	      <el-option v-for="(item, key) in districts" :key="item" :label="item" :value="key">{{item}}</el-option>
-	    </el-select>
-	  </el-form-item>
-	  <el-form-item label="活动类型">
-	    <el-select v-model="queryForm.type">
-    		<el-option v-for="(item, key) in activityType" :key="item" :label="item" :value="key">{{item}}</el-option>
-	    </el-select>
-	  </el-form-item>
-	  <el-form-item>
-	    <el-button type="primary" @click="queryData(1)">查询</el-button>
-	    <!-- 暂定功能 -->
-	    <el-button type="primary" @click="">导出excel</el-button>
-	  </el-form-item>
-	</el-form>
+    <div v-if="this.$store.state.isLogin">
+    	<h1>活动管理</h1>
+      <el-form :inline="true" :model="queryForm" class="demo-form-inline">
+    	  <el-form-item label="活动名">
+    	    <el-input v-model="queryForm.name" placeholder="活动名"></el-input>
+    	  </el-form-item>
+    	  <el-form-item label="活动区域">
+    	    <el-select v-model="queryForm.district">
+    	      <el-option v-for="(item, key) in districts" :key="item" :label="item" :value="key">{{item}}</el-option>
+    	    </el-select>
+    	  </el-form-item>
+    	  <el-form-item label="活动类型">
+    	    <el-select v-model="queryForm.type">
+        		<el-option v-for="(item, key) in activityType" :key="item" :label="item" :value="key">{{item}}</el-option>
+    	    </el-select>
+    	  </el-form-item>
+    	  <el-form-item>
+    	    <el-button type="primary" @click="queryData(1)">查询</el-button>
+    	    <!-- 暂定功能 -->
+    	    <el-button type="primary" @click="">导出excel</el-button>
+    	  </el-form-item>
+    	</el-form>
 
-	<el-table
-	    :data="queryList"
-	    border
-	    style="width: 100%">
-	    <el-table-column
-	      v-for="(item, index) in tableColumnConfig"
-	      :key="item.row"
-	      :fixed="index === 0"
-	      :prop="item.row"
-	      :label="item.label"
-	      :width="item.width">
-	    </el-table-column>
-	    <el-table-column
-	      fixed="right"
-	      label="操作"
-	      width="150">
-	      <template slot-scope="scope">
-	        <el-button @click="viewActivity(scope.row)" type="text" size="small">查看</el-button>
-	        <el-button @click="finishActivity(scope.row)" type="text" size="small">结束</el-button>
-	        <el-button @click="deleteActivity(scope.row)" type="text" size="small">删除</el-button>
-	      </template>
-	    </el-table-column>
-    </el-table>
+    	<el-table
+    	    :data="queryList"
+    	    border
+    	    style="width: 100%">
+    	    <el-table-column
+    	      v-for="(item, index) in tableColumnConfig"
+    	      :key="item.row"
+    	      :fixed="index === 0"
+    	      :prop="item.row"
+    	      :label="item.label"
+    	      :width="item.width">
+    	    </el-table-column>
+    	    <el-table-column
+    	      fixed="right"
+    	      label="操作"
+    	      width="150">
+    	      <template slot-scope="scope">
+    	        <el-button @click="viewActivity(scope.row)" type="text" size="small">查看</el-button>
+    	        <el-button @click="finishActivity(scope.row)" type="text" size="small">结束</el-button>
+    	        <el-button @click="deleteActivity(scope.row)" type="text" size="small">删除</el-button>
+    	      </template>
+    	    </el-table-column>
+        </el-table>
 
-	<el-pagination
-	  layout="prev, pager, next"
-	  :page-count="totalPage"
-	  :page-size="limit"
-	  @current-change="queryData">
-	</el-pagination>
+    	<el-pagination
+    	  layout="prev, pager, next"
+    	  :page-count="totalPage"
+    	  :page-size="limit"
+    	  @current-change="queryData">
+    	</el-pagination>
+    </div>
+
+    <div v-else>
+      <need-login></need-login>
+    </div>
   </div>
 </template>
 
 <script>
+import NeedLogin from '../common/components/need_login.vue';
 export default {
   name: 'ActivityManage',
+  components: { 'need-login': NeedLogin },
   data() {
     return {
       limit: 10,
@@ -75,11 +83,7 @@ export default {
     	districts: {},
       activityType: {},
       activityStatus: {},
-    	queryList: [{
-        id: 111,
-        name: '123',
-        district: '123'
-      }],
+    	queryList: [],
     	// 表格的列配置
     	tableColumnConfig: this.ACTIVITY_TABLE_CONFIG,
     	totalPage: 1
@@ -227,12 +231,14 @@ export default {
   	}
   },
   created() {
-    this.getActivityactivityType();
-    this.getDistricts();
-    this.getActivityStatus();
+    if (this.$store.state.isLogin) {
+      this.getActivityactivityType();
+      this.getDistricts();
+      this.getActivityStatus();
+    }
   },
   mounted() {
-    this.queryData(1);
+    this.$store.state.isLogin && this.queryData(1);
   }
 };
 </script>

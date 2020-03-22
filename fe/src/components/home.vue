@@ -1,27 +1,29 @@
 <template>
   <div class="container">
-    <div class="card-ctn" style="display: flex;">
-      <div class="card">
-        <div class="card-header">
-          当前活动
+    <div>
+      <div class="card-ctn" style="display: flex;">
+        <div class="card">
+          <div class="card-header">
+            当前活动
+          </div>
+          <div class="card-ctn">
+            <img src="" alt="活动封面">
+          </div>
+          <div class="card-footer">
+            <el-button type="primary">活动详情</el-button>
+            <el-button type="primary">报名情况</el-button>
+            <el-button type="primary">更多活动</el-button>
+          </div>
         </div>
-        <div class="card-ctn">
-          <img src="" alt="活动封面">
-        </div>
-        <div class="card-footer">
-          <el-button type="primary">活动详情</el-button>
-          <el-button type="primary">报名情况</el-button>
-          <el-button type="primary">更多活动</el-button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          消息卡片
-        </div>
-        <div class="card-ctn">
-          <div class="notice-item" v-for="item in noticeInfo">
-            <span>{{item.msg}}</span>
-            <span style="float: right;">{{item.time}}</span>
+        <div class="card">
+          <div class="card-header">
+            消息卡片
+          </div>
+          <div class="card-ctn">
+            <div class="notice-item" v-for="item in noticeInfo">
+              <span>{{item.msg}}</span>
+              <span style="float: right;">{{item.time}}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -30,8 +32,10 @@
 </template>
 
 <script>
+import { NeedLogin } from './common';
 export default {
   name: 'Home',
+  components: { 'need-login': NeedLogin },
   data() {
     return {
       noticeInfo: [

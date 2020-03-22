@@ -6,61 +6,68 @@
 
 <template>
   <div class="container">
-  	<h1>组织管理</h1>
-    <el-form :inline="true" :model="queryForm" class="demo-form-inline">
-	  <el-form-item label="组织名称">
-	    <el-input v-model="queryForm.name" placeholder="组织名称"></el-input>
-	  </el-form-item>
-	  <el-form-item label="组织区域">
-	    <el-select v-model="queryForm.region">
-	      <el-option v-for="(item, key) in districts" :key="item" :label="item" :value="key">{{item}}</el-option>
-	    </el-select>
-	  </el-form-item>
-	  <el-form-item label="组织类型">
-	    <el-select v-model="queryForm.type">
-    		<el-option v-for="(item, key) in types" :key="item" :label="item" :value="key">{{item}}</el-option>
-	    </el-select>
-	  </el-form-item>
-	  <el-form-item>
-	    <el-button type="primary" @click="queryData(1)">查询</el-button>
-	  </el-form-item>
-	</el-form>
+    <div v-if="this.$store.state.isLogin">
+      <h1>组织管理</h1>
+      <el-form :inline="true" :model="queryForm" class="demo-form-inline">
+      <el-form-item label="组织名称">
+        <el-input v-model="queryForm.name" placeholder="组织名称"></el-input>
+      </el-form-item>
+      <el-form-item label="组织区域">
+        <el-select v-model="queryForm.region">
+          <el-option v-for="(item, key) in districts" :key="item" :label="item" :value="key">{{item}}</el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="组织类型">
+        <el-select v-model="queryForm.type">
+          <el-option v-for="(item, key) in types" :key="item" :label="item" :value="key">{{item}}</el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="queryData(1)">查询</el-button>
+      </el-form-item>
+    </el-form>
 
-	<el-table
-	    :data="queryList"
-	    border
-	    style="width: 100%">
-	    <el-table-column
-	      v-for="(item, index) in tableColumnConfig"
-	      :key="item.rows"
-	      :fixed="index === 0"
-	      :prop="item.row"
-	      :label="item.label"
-	      :width="item.width">
-	    </el-table-column>
-	    <el-table-column
-	      fixed="right"
-	      label="操作"
-	    >
-	      <template slot-scope="scope">
-	        	<el-button type="text" size="small" @click="toEditPage(scope.row)">编辑</el-button>
-	        <el-button @click="deleteCommunity(scope.row)" type="text" size="small">删除</el-button>
-	      </template>
-	    </el-table-column>
-	  </el-table>
+    <el-table
+        :data="queryList"
+        border
+        style="width: 100%">
+        <el-table-column
+          v-for="(item, index) in tableColumnConfig"
+          :key="item.rows"
+          :fixed="index === 0"
+          :prop="item.row"
+          :label="item.label"
+          :width="item.width">
+        </el-table-column>
+        <el-table-column
+          fixed="right"
+          label="操作"
+        >
+          <template slot-scope="scope">
+              <el-button type="text" size="small" @click="toEditPage(scope.row)">编辑</el-button>
+            <el-button @click="deleteCommunity(scope.row)" type="text" size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-	  <el-pagination
-	    layout="prev, pager, next"
-	    :page-count="totalPage"
-	    :page-size="limit"
-	    @current-change="queryData">
-	  </el-pagination>
+      <el-pagination
+        layout="prev, pager, next"
+        :page-count="totalPage"
+        :page-size="limit"
+        @current-change="queryData">
+      </el-pagination>
+    </div>
+    <div v-else>
+      <need-login></need-login>
+    </div>
   </div>
 </template>
 
 <script>
+import NeedLogin from '../common/components/need_login.vue';
 export default {
   name: 'CommunityManage',
+  components: { 'need-login': NeedLogin },
   data() {
     return {
     	queryForm: {
@@ -70,7 +77,7 @@ export default {
       },
     	districts: [],
     	types: [],
-    	queryList: [{id: 111},{id: 222}],
+    	queryList: [],
     	totalPage: 1,
     	limit: 10,
     	// 表格的列配置
@@ -176,11 +183,15 @@ export default {
     }
   },
   created() {
-    this.getDistricts();
-    this.getCommunityTypes();
+    if (this.$store.state.isLogin) {
+      this.getDistricts();
+      this.getCommunityTypes();
+    }
   },
   mounted() {
-    this.queryData(1);
+    if (this.$store.state.isLogin) {
+      this.queryData(1);
+    }
   }
 };
 </script>

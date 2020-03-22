@@ -31,109 +31,120 @@
 </style>
 <template>
   <div class="container">
-    <div class="card">
-	    <div class="card-header">
-	      新建组织
-	    </div>
-	    <div class="card-ctn">
-	    	<el-steps :active="active" finish-status="success">
-				<el-step title="社团信息"></el-step>
-				<el-step title="负责人信息"></el-step>
-				<el-step title="社团展示"></el-step>
-				<el-step title="提交成功"></el-step>
-			</el-steps>
-	    </div>
-	    <div class="card-ctn" v-if="active === CREATE_STATUS.base_info">
-	    	<el-form ref="form1" label-width="100px" :model="queryForm" :rules="rules1">
-	    		<el-form-item label="校区" prop="district">
-	    			<el-select v-model="queryForm.district" placeholder="请选择">
-					    <el-option
-					      v-for="(item, index) in districts"
-					      :key="item"
-					      :label="item"
-					      :value="index">
-					    </el-option>
-				    </el-select>
-	    		</el-form-item>
+  	<div v-if="!this.$store.state.isLogin">
+			<need-login></need-login>
+		</div>
+		<!-- 管理员以上可见 -->
+		<div v-if="this.$store.state.isLogin && this.$store.state.role == 0">
+			<no-access></no-access>
+		</div>
+		<div v-if="this.$store.state.isLogin && this.$store.state.role != 0">
+	    <div class="card">
+		    <div class="card-header">
+		      新建组织
+		    </div>
+		    <div class="card-ctn">
+		    	<el-steps :active="active" finish-status="success">
+					<el-step title="社团信息"></el-step>
+					<el-step title="负责人信息"></el-step>
+					<el-step title="社团展示"></el-step>
+					<el-step title="提交成功"></el-step>
+				</el-steps>
+		    </div>
+		    <div class="card-ctn" v-if="active === CREATE_STATUS.base_info">
+		    	<el-form ref="form1" label-width="100px" :model="queryForm" :rules="rules1">
+		    		<el-form-item label="校区" prop="district">
+		    			<el-select v-model="queryForm.district" placeholder="请选择">
+						    <el-option
+						      v-for="(item, index) in districts"
+						      :key="item"
+						      :label="item"
+						      :value="index">
+						    </el-option>
+					    </el-select>
+		    		</el-form-item>
 
-	    		<el-form-item label="组织名称" prop="name">
-	    			<el-input v-model="queryForm.name" placeholder="请输入名称"></el-input>
-	    		</el-form-item>
-	    		
-	    		<el-form-item label="组织类型" prop="type">
-	    			<el-select v-model="queryForm.type" placeholder="请选择">
-					    <el-option
-					      v-for="(item, index) in types"
-					      :key="item"
-					      :label="item"
-					      :value="index">
-					    </el-option>
-				    </el-select>
-	    		</el-form-item>
+		    		<el-form-item label="组织名称" prop="name">
+		    			<el-input v-model="queryForm.name" placeholder="请输入名称"></el-input>
+		    		</el-form-item>
+		    		
+		    		<el-form-item label="组织类型" prop="type">
+		    			<el-select v-model="queryForm.type" placeholder="请选择">
+						    <el-option
+						      v-for="(item, index) in types"
+						      :key="item"
+						      :label="item"
+						      :value="index">
+						    </el-option>
+					    </el-select>
+		    		</el-form-item>
 
-	    		<el-form-item label="组织简介">
-	    			<el-input
-					  type="textarea"
-					  :autosize="{ minRows: 2, maxRows: 6}"
-					  placeholder="社团简介不少于200字"
-					  v-model="queryForm.description">
-					</el-input>
-	    		</el-form-item>
-	    	</el-form>
-	    </div>
-	    <div class="card-ctn" v-if="active === CREATE_STATUS.sponsor_info">
-	    	<el-form ref="form2" label-width="100px" :model="queryForm" :rules="rules2">
-		    	<el-form-item label="组织负责人" prop="sponsor">
-	    			<el-input v-model="queryForm.sponsor" placeholder="请输入负责人真实姓名"></el-input>
-	    		</el-form-item>
+		    		<el-form-item label="组织简介">
+		    			<el-input
+						  type="textarea"
+						  :autosize="{ minRows: 2, maxRows: 6}"
+						  placeholder="社团简介不少于200字"
+						  v-model="queryForm.description">
+						</el-input>
+		    		</el-form-item>
+		    	</el-form>
+		    </div>
+		    <div class="card-ctn" v-if="active === CREATE_STATUS.sponsor_info">
+		    	<el-form ref="form2" label-width="100px" :model="queryForm" :rules="rules2">
+			    	<el-form-item label="组织负责人" prop="sponsor">
+		    			<el-input v-model="queryForm.sponsor" placeholder="请输入负责人真实姓名"></el-input>
+		    		</el-form-item>
 
-	    		<el-form-item label="负责人手机" prop="phone">
-	    			<el-input v-model="queryForm.phone" placeholder="请输入手机号"></el-input>
-	    		</el-form-item>
-	    	</el-form>
-	    </div>
-	    <div class="card-ctn" v-if="active === CREATE_STATUS.displayment">
-	    	<el-form ref="form" label-width="100px">
-    			<el-form-item label="组织logo">
-    				<el-upload
-					  class="upload-demo"
-					  drag
-					  :limit="1"
-					  :on-success="uploadSuccess"
-					  action="/img/upload"
-					>
-					  <i class="el-icon-upload"></i>
-					  <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-					  <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-					</el-upload>
-    			</el-form-item>
-    			<el-form-item label="组织slogan">
-	    			<el-input
-					  type="textarea"
-					  :autosize="{ minRows: 2, maxRows: 6}"
-					  placeholder="请输入 slogan"
-					  v-model="queryForm.slogan">
-					</el-input>
-	    		</el-form-item>
-    		</el-form>
-	    </div>
-	    <div class="success" v-if="active === CREATE_STATUS.success">
-    		<i class="el-icon-success"></i>
-    		<div>提交成功</div>
-    	</div>
-	    <div class="card-footer">
-	    	<el-button v-if="active && active !== CREATE_STATUS.success" @click="toLast">上一步</el-button>
-		    <el-button v-if="active < CREATE_STATUS.displayment" @click="toNext" type="primary">下一步</el-button>
-		    <el-button v-if="active === CREATE_STATUS.displayment" type="primary" @click="submitForm">提交</el-button>
-		    <el-button v-if="active === CREATE_STATUS.success" type="primary" @click="toCreate">继续新建</el-button>
-	    </div>
-	  </div>
+		    		<el-form-item label="负责人手机" prop="phone">
+		    			<el-input v-model="queryForm.phone" placeholder="请输入手机号"></el-input>
+		    		</el-form-item>
+		    	</el-form>
+		    </div>
+		    <div class="card-ctn" v-if="active === CREATE_STATUS.displayment">
+		    	<el-form ref="form" label-width="100px">
+	    			<el-form-item label="组织logo">
+	    				<el-upload
+						  class="upload-demo"
+						  drag
+						  :limit="1"
+						  :on-success="uploadSuccess"
+						  action="/img/upload"
+						>
+						  <i class="el-icon-upload"></i>
+						  <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+						  <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+						</el-upload>
+	    			</el-form-item>
+	    			<el-form-item label="组织slogan">
+		    			<el-input
+						  type="textarea"
+						  :autosize="{ minRows: 2, maxRows: 6}"
+						  placeholder="请输入 slogan"
+						  v-model="queryForm.slogan">
+						</el-input>
+		    		</el-form-item>
+	    		</el-form>
+		    </div>
+		    <div class="success" v-if="active === CREATE_STATUS.success">
+	    		<i class="el-icon-success"></i>
+	    		<div>提交成功</div>
+	    	</div>
+		    <div class="card-footer">
+		    	<el-button v-if="active && active !== CREATE_STATUS.success" @click="toLast">上一步</el-button>
+			    <el-button v-if="active < CREATE_STATUS.displayment" @click="toNext" type="primary">下一步</el-button>
+			    <el-button v-if="active === CREATE_STATUS.displayment" type="primary" @click="submitForm">提交</el-button>
+			    <el-button v-if="active === CREATE_STATUS.success" type="primary" @click="toCreate">继续新建</el-button>
+		    </div>
+		  </div>
+		</div>
   </div>
 </template>
 
 <script>
+import { NeedLogin, NoAccess } from '../common';
 export default {
   name: 'CommunityCreate',
+  components: { 'need-login': NeedLogin, 'no-access': NoAccess },
   data() {
   	let validatePhone = (rule, value, callback) => {
 		let reg = /^1[345789]{1}[0-9]{9}/;
@@ -262,8 +273,8 @@ export default {
     }
   },
   mounted () {
-  	this.getDistricts();
-  	this.getCommunityTypes();
+  	this.$store.state.isLogin && this.getDistricts();
+  	this.$store.state.isLogin && this.getCommunityTypes();
   }
 };
 </script>

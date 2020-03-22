@@ -24,14 +24,14 @@ router.get('/types', async (req, res) => {
 });
 
 /**
- * 组织列表
+ * 组织列表(已通过审核)
  */
 router.post('/list', async (req, res) => {
     try {
         let { offset, limit, name, district, type, id } = req.body;
-        let sqlStr = `SELECT * FROM community_info WHERE 1=1`; // 保证没有条件时依然可查询
+        let sqlStr = `SELECT * FROM community_info WHERE review_status=102`;
         // 总条目查询
-        let totalData = await db(`SELECT COUNT(*) from community_info WHERE 1=1`);
+        let totalData = await db(`SELECT COUNT(*) from community_info WHERE review_status=102`);
         let total_page = Math.ceil(totalData[0]['COUNT(*)'] / +limit);
         if (id) {
             // 查询特定社团
@@ -50,10 +50,79 @@ router.post('/list', async (req, res) => {
         }
         let data = await db(sqlStr);
         if (data) {
-	        res.json({ code: 0, data, message: '', total_page });
+	        res.json({ code: 0, data, message: 'ok', total_page });
         } else {
 	        res.json({ code: -1, data: null, message: '数据不存在' });
         }
+    } catch (e) {
+        res.json({code: -1, data: null, message: e});
+    }
+});
+
+/**
+ * 未审批列表
+ */
+ router.post('/unreview/list', async (req, res) => {
+    try {
+        let { limit, offset } = req.body;
+        
+        // 总条目查询
+        let totalData = await db(`SELECT COUNT(*) from community_info WHERE review_status=100`);
+        let total_page = Math.ceil(totalData[0]['COUNT(*)'] / +limit);
+
+        let sqlStr = `SELECT * FROM community_info WHERE review_status=100`;
+        sqlStr = `${sqlStr} limit ${offset},${limit}`;
+        let data = await db(sqlStr);
+
+        if (data) {
+            res.json({ code: 0, data, message: 'ok', total_page });
+        } else {
+            res.json({ code: -1, data: null, message: '数据不存在' });
+        }
+
+    } catch (e) {
+        res.json({code: -1, data: null, message: e});
+    }
+ });
+
+ /**
+ * 未审批未通过列表
+ */
+ router.post('/fail/list', async (req, res) => {
+    try {
+        let { limit, offset } = req.body;
+        
+        // 总条目查询
+        let totalData = await db(`SELECT COUNT(*) from community_info WHERE review_status=101`);
+        let total_page = Math.ceil(totalData[0]['COUNT(*)'] / +limit);
+
+        let sqlStr = `SELECT * FROM community_info WHERE review_status=101`;
+        sqlStr = `${sqlStr} limit ${offset},${limit}`;
+        let data = await db(sqlStr);
+
+        if (data) {
+            res.json({ code: 0, data, message: 'ok', total_page });
+        } else {
+            res.json({ code: -1, data: null, message: '数据不存在' });
+        }
+
+    } catch (e) {
+        res.json({code: -1, data: null, message: e});
+    }
+ });
+
+/**
+ * 社团审批
+ */
+router.post('/approval', async (req, res) => {
+    let { id, action } = req.body;
+    try {
+        const data = await db(`UPDATE community_info SET review_status=${action} WHERE id=${id}`);
+        if (data.affectedRows) {
+            res.json({ code: 0, data, message: '' });
+        } else {
+            res.json({ code: -1, data: null, message: '修改失败' });
+        } 
     } catch (e) {
         res.json({code: -1, data: null, message: e});
     }
@@ -69,7 +138,7 @@ router.post('/new', async (req, res) => {
         // TODO: insert语句的语法有误
         const data = await db(`INSERT INTO community_info (district,type,name,description,sponsor,phone,slogan,logo,create_time) VALUE (${district || 0},${type || 0},'${name || ''}','${description || ''}','${sponsor || ''}','${phone || ''}','${slogan || ''}','${logo || ''}',${create_time})`);
         if (data.affectedRows) {
-            res.json({ code: 0,data, message: '' });
+            res.json({ code: 0,data, message: 'ok' });
         } else {
             res.json({ code: -1, data: null, message: '数据不存在' });
         }

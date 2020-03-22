@@ -33,14 +33,14 @@ router.post('/login', async (req, res) => {
  * 用户注册
  */
 router.post('/regist', async (req, res) => {
-    let { account, password, number } = req.body;
+    let { account, password, number, nickname } = req.body;
     if (!account || !password) {
         res.json({ code: -1, data: null, message: '数据不可以为空' })
     } else {
         try {
             const [ data ] = await db(`SELECT * FROM user_info WHERE account='${account}'`);
             if (!data) {
-                const data = await db(`INSERT INTO user_info (account,password,number) VALUE ('${account}','${password}','${number}')`);
+                const data = await db(`INSERT INTO user_info (account,password,number,nickname) VALUE ('${account}','${password}','${number}','${nickname}')`);
                 if (data.affectedRows) {
                     res.json({ code: 0, data, message: '' });
                 } else {
@@ -65,10 +65,68 @@ router.get('/logout', (req, res)=>{
 })
 
 /**
+ * 账号列表
+ */
+ router.post('/account/list', async (req, res) => {
+    try {
+        let { limit, offset } = req.body;
+        
+        // 总条目查询
+        let totalData = await db(`SELECT COUNT(*) from user_info`);
+        let total_page = Math.ceil(totalData[0]['COUNT(*)'] / +limit);
+
+        let sqlStr = `SELECT * FROM user_info`;
+        sqlStr = `${sqlStr} limit ${offset},${limit}`;
+        let data = await db(sqlStr);
+
+        if (data) {
+            res.json({ code: 0, data, message: 'ok', total_page });
+        } else {
+            res.json({ code: -1, data: null, message: '数据不存在' });
+        }
+
+    } catch (e) {
+        res.json({code: -1, data: null, message: e});
+    }
+ });
+
+/**
+* 角色列表
+*/
+router.get('/role/list', async (req, res) => {
+    try {
+        const [ data ] = await db('select * from roles');
+        if (data) {
+            res.json({ code: 0, data, message: '' });
+        } else {
+            res.json({ code: -1, data: null, message: '数据不存在' });
+        }
+    } catch (e) {
+        res.json({code: -1, data: null, message: e});
+    }
+});
+
+/**
+* 将账号设置为管理员
+*/
+router.post('/master', async (req, res) => {
+    let { uid } = req.body;
+    try {
+        const data = await db(`UPDATE user_info SET role=1 WHERE uid=${uid}`);
+        if (data.affectedRows) {
+            res.json({ code: 0, data, message: '' });
+        } else {
+            res.json({ code: -1, data: null, message: '设置失败' });
+        }
+    } catch (e) {
+        res.json({code: -1, data: null, message: e});
+    }
+})
+
+/**
  * 社团成员列表
  */
 router.post('/list', async (req, res) => {
-    console.log(req.session.login)
     try {
         let { offset, limit, community_id, name, number, id } = req.body;
         let sqlStr = `SELECT * FROM member_info WHERE 1=1`; // 保证没有条件时依然可查询

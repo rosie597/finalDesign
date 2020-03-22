@@ -46,12 +46,12 @@
 
 <template>
 	<div class="header-ctn">
-		<div class="info" v-if="isLogin">
-			<span>{{userName}}</span>
+		<div class="info" v-if="this.$store.state.isLogin">
+			<span>{{this.$store.state.nickname}}</span>
 
 			<el-dropdown @command="handleCommand">
 			  <span class="el-dropdown-link">
-			    <img :src="avatar" alt="头像" />
+			    <img :src="this.$store.state.avatar" alt="头像" />
 			  </span>
 			  <el-dropdown-menu slot="dropdown">
 			    <el-dropdown-item command="setup">账号设置</el-dropdown-item>
@@ -59,7 +59,7 @@
 			  </el-dropdown-menu>
 			</el-dropdown>
 		</div>
-		<div class="btn-ctn" v-if="!isLogin">
+		<div class="btn-ctn" v-if="!this.$store.state.isLogin">
 			<el-button type="primary" @click="loginFormVisible = true">登 陆</el-button>
 			<el-button @click="registFormVisible = true">注 册</el-button>
 		</div>
@@ -83,6 +83,9 @@
 		  <el-form label-position="left" :rules="registRules" :model="registForm" ref="registForm">
 		    <el-form-item label="手机号" :label-width="formLabelWidth" prop="account">
 		      <el-input v-model="registForm.account"></el-input>
+		    </el-form-item>
+		    <el-form-item label="昵称" :label-width="formLabelWidth" prop="nickname">
+		      <el-input v-model="registForm.nickname"></el-input>
 		    </el-form-item>
 		    <el-form-item label="学号/工号" :label-width="formLabelWidth" prop="number">
 		      <el-input v-model="registForm.number"></el-input>
@@ -115,9 +118,6 @@
 		        }
 	        };
 			return {
-				userName: 'rosieliu',
-				avatar: '',
-				isLogin: true,
 		        loginFormVisible: false,
 		        registFormVisible: false,
 		        password2: '',
@@ -125,7 +125,8 @@
 		        	account: '',
 		        	password: '',
 		        	number: '',
-		        	password2: ''
+		        	password2: '',
+		        	nickname: ''
 		        },
 		        loginForm: {
 		        	account: '',
@@ -162,7 +163,6 @@
 				}
 			},
 			login() {
-				let _this = this;
 				this.$refs['loginForm'].validate((valid) => {
 					if (valid) {
 				      this.$axios({
@@ -171,22 +171,23 @@
 				        data: this.loginForm
 				      }).then(res => {
 				        if (res.data.code == 0) {
-				          _this.$message({
+				          this.loginFormVisible = false;
+				          this.$store.dispatch('loginFn', res.data.data);
+				          this.$message({
 				            type: 'success',
 				            message: '登陆成功'
 				          });
-				          _this.loginFormVisible = false;
-				          _this.isLogin = true;
 				        } else {
-				          _this.$message({
+				          this.$message({
 				            type: 'error',
 				            message: res.data.message
 				          })
 				        }
 				      }).catch(err => {
+				      	console.log(err)
 				        this.$message({
 				          type: 'error',
-				          message: err.data.message
+				          message: '出错了'
 				        })
 				      })
 					}
@@ -202,17 +203,17 @@
 				        data: this.registForm
 				      }).then(res => {
 				        if (res.data.code == 0) {
-				          _this.$message({
+				          this.$message({
 				            type: 'success',
 				            message: '注册成功'
 				          });
-				          _this.registFormVisible = false;
 				        } else {
-				          _this.$message({
+				          this.$message({
 				            type: 'error',
 				            message: res.data.message
 				          })
 				        }
+				        this.registFormVisible = false;
 				      }).catch(err => {
 				        this.$message({
 				          type: 'error',
@@ -229,24 +230,28 @@
 		        url: '/backend/user/logout'
 		      }).then(res => {
 		        if (res.data.code == 0) {
-		          _this.$message({
+		          this.$message({
 		            type: 'success',
 		            message: '注销成功'
 		          });
-		          _this.isLogin = false;
+		          
+		          this.$store.dispatch('logoutFn');
 		        } else {
-		          _this.$message({
+		          this.$message({
 		            type: 'error',
 		            message: res.data.message
 		          })
 		        }
 		      }).catch(err => {
-		        this.$message({
+	        	this.$message({
 		          type: 'error',
 		          message: '请重试'
 		        })
 		      })
 			}
+		},
+
+		mounted () {
 		}
 	}
 </script>

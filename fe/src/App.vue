@@ -14,6 +14,7 @@
                   <i class="el-icon-menu"></i>
                   <span slot="title">首页</span>
                 </el-menu-item>
+
                 <el-submenu index="2">
                   <template slot="title">
                     <i class="el-icon-location"></i>
@@ -24,6 +25,7 @@
                     <el-menu-item index="/communityManage">组织管理</el-menu-item>
                   </el-menu-item-group>
                 </el-submenu>
+
                 <el-submenu index="3">
                   <template slot="title">
                     <i class="el-icon-location"></i>
@@ -34,6 +36,7 @@
                     <el-menu-item index="/activityManage">活动管理</el-menu-item>
                   </el-menu-item-group>
                 </el-submenu>
+
                 <el-submenu index="4">
                   <template slot="title">
                     <i class="el-icon-location"></i>
@@ -44,6 +47,11 @@
                     <el-menu-item index="/activityApproval">活动审批</el-menu-item>
                   </el-menu-item-group>
                 </el-submenu>
+
+                <el-menu-item index="/accountManage">
+                  <i class="el-icon-menu"></i>
+                  <span slot="title">账户管理</span>
+                </el-menu-item>
               </el-menu>
             </el-col>
           </div>

@@ -13,6 +13,28 @@ export default {
 			1: '进行中',
 			2: '已结束'
 		}
+        Vue.prototype.USER_TABLE_CONFIG = [
+            {
+                row: 'account',
+                width: 150,
+                label: '账号'
+            },
+            {
+                row: 'nickname',
+                width: 150,
+                label: '昵称'
+            },
+            {
+                row: 'number',
+                width: 150,
+                label: '学号/工号'
+            },
+            {
+                row: 'role',
+                width: 150,
+                label: '角色'
+            }
+        ]
 		Vue.prototype.PEOPLE_TABLE_CONFIG = [
     		{
     			row: 'name',

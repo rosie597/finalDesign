@@ -1,7 +1,8 @@
 <style scoped>
-.container h1 {
-  padding: 20px 0;
-}
+  .container {
+      background: rgba(176,224,230,.1);
+      margin-top: 40px;
+  }
 </style>
 
 <template>
@@ -14,7 +15,7 @@
       <no-access></no-access>
     </div>
     <div v-if="this.$store.state.isLogin && this.$store.state.role == 2">
-    	<h1>组织管理</h1>
+    	<h1>组织审批</h1>
     	<el-table
   	    :data="queryList"
   	    border
@@ -63,6 +64,18 @@ export default {
     	// 表格的列配置
     	tableColumnConfig: this.COMMUNITY_TABLE_CONFIG
     };
+  },
+  computed: {
+    listenLogin () {
+      return this.$store.state.isLogin
+    }
+  },
+  watch: {
+    listenLogin (prev, cur) {
+      if (cur && this.$store.state.role == 2) {
+        this.queryData();
+      }
+    }
   },
   methods: {
     communityApproval (data, action) {
@@ -174,8 +187,8 @@ export default {
     }
   },
   created() {
-    this.$store.state.isLogin && this.getDistricts();
-    this.$store.state.isLogin && this.getCommunityTypes();
+    this.getDistricts();
+    this.getCommunityTypes();
   },
   mounted() {
     this.$store.state.isLogin && this.queryData(1);

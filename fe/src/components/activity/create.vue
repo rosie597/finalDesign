@@ -1,10 +1,16 @@
 <style scoped>
+	.container {
+	  margin-top: 40px;
+	  background: rgba(176,224,230,.1);
+	}
 	.card {
 	  width: 900px;
 	  border-radius: 15px;
 	  border: 1px solid #eee;
 	  box-shadow: 1px 5px 15px #eee;
-	  margin-right: 20px;
+	  margin-left: 100px;
+      margin-top: 30px;
+	  background: #fff;
 	}
 	.card-ctn {
 	  padding: 20px;
@@ -14,6 +20,10 @@
 	  border-bottom: 1px solid #eee;
 	  padding: 15px;
 	  font-weight: bold;
+	  color: white;
+	  background: #409EFF;
+	  border-top-left-radius: 15px;
+	  border-top-right-radius: 15px;
 	}
 	.card-footer {
 	  height: 50px;
@@ -140,10 +150,33 @@
 			    	</div>
 			    </div>
 			    <div class="card-footer">
-			    	<el-button v-if="active && active !== CREATE_STATUS.success" @click="toLast">上一步</el-button>
-				    <el-button v-if="active < CREATE_STATUS.displayment" @click="toNext" type="primary">下一步</el-button>
-				    <el-button v-if="active === CREATE_STATUS.displayment" type="primary" @click="submitForm">提交</el-button>
-				    <el-button v-if="active === CREATE_STATUS.success" type="primary" @click="toCreate">继续新建</el-button>
+			    	<el-button 
+			    		v-if="active && active !== CREATE_STATUS.success" 
+			    		@click="toLast"
+			    	>
+			    		上一步
+			    	</el-button>
+				    <el-button 
+				    	v-if="active < CREATE_STATUS.displayment" 
+				    	@click="toNext" 
+				    	type="primary"
+				    >
+						下一步
+					</el-button>
+				    <el-button 
+				    	v-if="active === CREATE_STATUS.displayment" 
+				    	type="primary" 
+				    	@click="submitForm"
+				    >
+						提交
+					</el-button>
+				    <el-button 
+				    	v-if="active === CREATE_STATUS.success"
+				    	type="primary"
+				    	@click="toCreate"
+				    >
+				    	继续新建
+					</el-button>
 			    </div>
 		    </div>
 		</div>
@@ -217,6 +250,7 @@
 			}
 		},
 		methods: {
+			// 进入下一步
 			toNext () {
 				if (this.active === this.CREATE_STATUS.base_info) {
 					this.$refs['form1'].validate((valid) => {
@@ -236,6 +270,7 @@
 		        	this.active = this.CREATE_STATUS.base_info;
 		        }
 		    },
+		    // 回到上一步
 		    toLast () {
 		    	this.active--;
 		    },
@@ -300,8 +335,8 @@
 	    }
 		},
 		mounted () {
-			this.$store.state.isLogin && this.getDistricts();
-			this.$store.state.isLogin && this.getActivityTypes();
+			this.getDistricts();
+			this.getActivityTypes();
 		}
 	}
 </script>

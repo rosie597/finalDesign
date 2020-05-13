@@ -9,10 +9,18 @@ const multer=require('multer'); //可以解析multipart/form-data类型数据
 const pathLib=require('path');
 const fs=require('fs');
 
-const multerObj=multer({dest:'./upload/'});
-
 const server=express();
 server.listen(8883);
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '/www/upload')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now())
+  }
+})
+const multerObj=multer({ dest: './www/upload' });
 
 // cookie签名加密验证
 server.use(c_parser('djfaisdhfiu'));
@@ -41,8 +49,10 @@ server.use('/backend/activity', require(__dirname + '/router/activity'));
 // 图片上传储存并返回路径
 server.post('/img/upload',function(req, res){
   console.log(req.files)
-  var newName = req.files[0].originalname
-  fs.rename(req.files[0].path, newName, function(err){
+  var newName = req.files[0].originalname;
+  var path = req.files[0].destination + '/' + req.files[0].filename
+  console.log(path)
+  fs.rename(path, './www/upload/' + newName, function(err){
     if(err){
       res.json({message:'上传失败', data:null, code: -1})
     }else{
@@ -88,7 +98,7 @@ server.use('/academics', async (req, res) => {
 // 配置模板引擎
 server.engine('html',consolidate.ejs);
 server.set('view engine','html');
-server.set('views', __dirname + '/../fe/dist/');
+server.set('views', './www');
 
 server.all('*', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -120,4 +130,4 @@ server.get('/',(req,res)=>{
 // 	res.send('cookiekkk');
 // })
 
-server.use(static(__dirname + '/../fe/dist'));
+server.use(static('./www'));

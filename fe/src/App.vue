@@ -1,8 +1,10 @@
 <template>
   <div id="app">
     <el-container>
-        <el-aside width="250px">
-          <div class="top-logo"></div>
+        <el-aside width="260px">
+          <div class="top-logo">
+            <el-image src="/upload/gdut.jpg" style="height: 100%;" fit="contain"></el-image>
+          </div>
           <div class="directory">
             <el-col :span="24">
               <h5>目录</h5>
@@ -43,7 +45,7 @@
                     <span>审批中心</span>
                   </template>
                   <el-menu-item-group>
-                    <el-menu-item index="/communityApproval">社团审批</el-menu-item>
+                    <el-menu-item index="/communityApproval">组织审批</el-menu-item>
                     <el-menu-item index="/activityApproval">活动审批</el-menu-item>
                   </el-menu-item-group>
                 </el-submenu>
@@ -81,17 +83,25 @@ export default {
 };
 </script>
 
-<style>
-  * {
-    margin: 0;
-  }
+<style scoped>
   .body-ctn {
     padding: 0;
     margin: 30px;
   }
   .top-logo {
     height: 48px;
-    background: blue;
+/*    line-height: 44px;
+    letter-spacing: 8px;
+    border-bottom: 1px solid #eee;
+    background-color: rgba(0, 0, 255, 0.1);
+    font-weight: 800;
+    font-size: 24px;
+    color: #409eff;
+    text-align: center;
+    vertical-align: center;*/
+  }
+  .el-aside {
+    padding-left: 10px;
   }
   .directory {
     width: 100%;

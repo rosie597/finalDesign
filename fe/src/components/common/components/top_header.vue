@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 	.header-ctn {
 		width: calc(100vw - 250px);
 	    height: 48px;
@@ -12,15 +12,39 @@
 	    align-items: center;
 	    justify-content: flex-end;
 	}
+	.top-logo {
+		position: absolute;
+		left: 0;
+		height: 48px;
+	    line-height: 44px;
+	    letter-spacing: 8px;
+	    border-bottom: 1px solid #eee;
+	    background-color: rgba(0, 0, 255, 0.1);
+	    font-weight: 800;
+	    font-size: 24px;
+	    color: #409eff;
+	    text-align: center;
+	    vertical-align: center;
+	}
 	.header-ctn img {
 		height: 32px;
 		width: 32px;
 		border-radius: 50%;
 		margin-left: 20px;
 		margin-right: 15px;
+		cursor: pointer;
 	}
 	.info {
-		margin-right: 20px;
+		display: flex;
+	    margin-right: 40px;
+	    padding-top: 8px;
+	}
+	.name-ctn {
+		line-height: 32px;
+		font-weight: bold;
+	    letter-spacing: 2px;
+	    font-family: cursive;
+	    font-size: 18px;
 	}
 	.btn-ctn {
 		margin-right: 20px;
@@ -46,13 +70,19 @@
 
 <template>
 	<div class="header-ctn">
+		<!-- <div class="top-logo">
+			<i class="el-icon-school"></i>
+            组织管理系统
+		</div> -->
 		<div class="info" v-if="this.$store.state.isLogin">
-			<span>{{this.$store.state.nickname}}</span>
+			<div class="name-ctn">
+				<span>{{this.$store.state.nickname}}</span>
+			</div>
 
 			<el-dropdown @command="handleCommand">
-			  <span class="el-dropdown-link">
-			    <img :src="this.$store.state.avatar" alt="头像" />
-			  </span>
+			    <span class="el-dropdown-link">
+			      <img :src="this.$store.state.avatar" alt="头像" />
+			    </span>
 			  <el-dropdown-menu slot="dropdown">
 			    <el-dropdown-item command="setup">账号设置</el-dropdown-item>
 			    <el-dropdown-item command="logout">注销登陆</el-dropdown-item>
@@ -64,12 +94,12 @@
 			<el-button @click="registFormVisible = true">注 册</el-button>
 		</div>
 
-		<el-dialog title="登 陆" :visible.sync="loginFormVisible">
+		<el-dialog title="登 陆" :visible.sync="loginFormVisible" width="35%" append-to-body>
 		  <el-form label-position="left" :rules="loginRules" :model="loginForm" ref="loginForm">
-		    <el-form-item label="手机号" :label-width="formLabelWidth" prop="account">
+		    <el-form-item label="手机号" :label-width="formLabelWidth" prop="account" autocomplete="on">
 		      <el-input v-model="loginForm.account"></el-input>
 		    </el-form-item>
-		    <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
+		    <el-form-item label="密码" :label-width="formLabelWidth" prop="password" autocomplete="on">
 		      <el-input v-model="loginForm.password" type="password"></el-input>
 		    </el-form-item>
 		  </el-form>
@@ -79,7 +109,7 @@
 		  </div>
 		</el-dialog>
 		
-		<el-dialog title="账 号 注 册" :visible.sync="registFormVisible">
+		<el-dialog title="账 号 注 册" :visible.sync="registFormVisible" width="35%" append-to-body>
 		  <el-form label-position="left" :rules="registRules" :model="registForm" ref="registForm">
 		    <el-form-item label="手机号" :label-width="formLabelWidth" prop="account">
 		      <el-input v-model="registForm.account"></el-input>

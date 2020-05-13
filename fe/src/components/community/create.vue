@@ -1,10 +1,16 @@
 <style scoped>
+	.container {
+	  margin-top: 40px;
+	  background: rgba(176,224,230,.1);
+	}
 	.card {
 	  width: 900px;
 	  border-radius: 15px;
 	  border: 1px solid #eee;
 	  box-shadow: 1px 5px 15px #eee;
-	  margin-right: 20px;
+	  margin-left: 100px;
+      margin-top: 30px;
+	  background: #fff;
 	}
 	.card-ctn {
 	  padding: 20px;
@@ -14,6 +20,10 @@
 	  border-bottom: 1px solid #eee;
 	  padding: 15px;
 	  font-weight: bold;
+	  color: white;
+	  background: #409EFF;
+	  border-top-left-radius: 15px;
+	  border-top-right-radius: 15px;
 	}
 	.card-footer {
 	  height: 50px;
@@ -107,8 +117,8 @@
 						  class="upload-demo"
 						  drag
 						  :limit="1"
-						  :on-success="uploadSuccess"
 						  action="/img/upload"
+						  :http-request="uploadImage"
 						>
 						  <i class="el-icon-upload"></i>
 						  <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -213,6 +223,31 @@ export default {
     toLast() {
     	this.active--;
     },
+    uploadImage (param) {
+    	console.log(param);
+    	let formData = new FormData();
+    	formData.append('image', param.file);
+
+    	this.$axios({
+    		url: '/img/upload',
+    		method: 'post',
+    		data: formData
+    	}).then(res => {
+    		if (res.data.code == 0) {
+    			this.queryForm.logo = res.data.data;
+    		} else {
+    			this.$message({
+    				type: 'error',
+    				message: res.data.message
+    			})
+    		}
+    	}).catch(err => {
+	        this.$message({
+	          type: 'error',
+	          message: '网络错误'
+	        })
+	    })
+    },
     getDistricts () {
     	this.$axios.get('/districts').then(res => {
     		this.districts = res.data.data
@@ -233,12 +268,9 @@ export default {
 	        })
 	    })
     },
-    uploadSuccess(res) {
-    	this.queryForm.logo = res.data.data;
-    },
     submitForm() {
     	this.$axios({
-    		url: './backend/community/new',
+    		url: '/backend/community/new',
     		method: 'post',
     		data: this.queryForm
     	}).then(res => {
@@ -273,8 +305,8 @@ export default {
     }
   },
   mounted () {
-  	this.$store.state.isLogin && this.getDistricts();
-  	this.$store.state.isLogin && this.getCommunityTypes();
+  	this.getDistricts();
+  	this.getCommunityTypes();
   }
 };
 </script>

@@ -62,7 +62,7 @@ router.get('/logout', (req, res)=>{
     req.session.login = false;
     req.session.user = '';
     res.json({ code: 0, message:'已退出' });
-})
+});
 
 /**
  * 账号列表
@@ -74,7 +74,6 @@ router.get('/logout', (req, res)=>{
         // 总条目查询
         let totalData = await db(`SELECT COUNT(*) from user_info`);
         let total_page = Math.ceil(totalData[0]['COUNT(*)'] / +limit);
-
         let sqlStr = `SELECT * FROM user_info`;
         sqlStr = `${sqlStr} limit ${offset},${limit}`;
         let data = await db(sqlStr);

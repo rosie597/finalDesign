@@ -1,6 +1,7 @@
 <style scoped>
-.container h1 {
-  padding: 20px 0;
+.container {
+    background: rgba(176,224,230,.1);
+    margin-top: 40px;
 }
 </style>
 
@@ -62,6 +63,18 @@
         roleList: [],
         totalPage: 1
       };
+    },
+    computed: {
+      listenLogin () {
+        return this.$store.state.isLogin;
+      }
+    },
+    watch: {
+      listenLogin (prev, cur) {
+        if (cur && this.$store.state.role == 2) {
+          this.queryData();
+        }
+      }
     },
     methods: {
     	queryData (page) {
@@ -144,7 +157,7 @@
       }
     },
     created() {
-    	this.$store.state.isLogin && this.getRoles();
+    	this.getRoles();
     },
     mounted() {
       this.$store.state.isLogin && this.queryData(1);

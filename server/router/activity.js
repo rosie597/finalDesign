@@ -57,7 +57,7 @@ router.post('/list', async (req, res) => {
         if (type) {
             sqlStr = `${sqlStr} AND type=${type}`
         }
-        sqlStr = `${sqlStr} limit ${offset},${limit}`;
+        sqlStr = `${sqlStr} order by create_time desc limit ${offset},${limit}`;
         let data = await db(sqlStr);
         if (data) {
             res.json({ code: 0, data, message: '', total_page });

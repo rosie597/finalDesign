@@ -16,10 +16,13 @@
     "element-ui": "^2.13.0",
     "express": "^4.17.1",
     "express-static": "^1.2.6",
+    "happypack": "^5.0.1",
     "qs": "^6.9.1",
     "vue": "^2.5.2",
+    "vue-json-excel": "^0.2.98",
     "vue-router": "^3.0.1",
-    "vue-ueditor-wrap": "^2.4.1"
+    "vue-ueditor-wrap": "^2.4.1",
+    "webpack-parallel-uglify-plugin": "^1.1.2"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

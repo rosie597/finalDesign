@@ -8,7 +8,7 @@
 
 <template>
   <div class="container">
-    <div class="btn-ctn">
+    <div class="btn-ctn" v-if="this.$store.state.role != 0">
         <el-button @click="showModal('new')" type="primary">
             新增成员
         </el-button>
@@ -41,8 +41,8 @@
 	      label="操作"
 	      width="150">
 	      <template slot-scope="scope">
-	        <el-button @click="showModal('edit',scope.row)" type="text" size="small">编辑</el-button>
-	        <el-button @click="deleteMember(scope.row)" type="text" size="small">删除</el-button>
+	        <el-button @click="showModal('edit',scope.row)" type="text" size="small" disabled="$store.state.role == 0">编辑</el-button>
+	        <el-button @click="deleteMember(scope.row)" type="text" size="small" disabled="$store.state.role == 0">删除</el-button>
 	      </template>
 	    </el-table-column>
     </el-table>

@@ -1,7 +1,8 @@
 <style scoped>
-.container h1 {
-  padding: 20px 0;
-}
+  .container {
+      background: rgba(176,224,230,.1);
+      margin-top: 40px;
+  }
 </style>
 
 <template>
@@ -14,7 +15,7 @@
       <no-access></no-access>
     </div>
     <div v-if="this.$store.state.isLogin && this.$store.state.role == 2">
-      <h1>活动管理</h1>
+      <h1>活动审批</h1>
       <el-table
         :data="queryList"
         border
@@ -64,6 +65,18 @@ export default {
     	tableColumnConfig: this.ACTIVITY_TABLE_CONFIG,
     	totalPage: 1
     };
+  },
+  computed: {
+    listenLogin () {
+      return this.$store.state.isLogin
+    }
+  },
+  watch: {
+    listenLogin (prev, cur) {
+      if (cur && this.$store.state.role == 2) {
+        this.queryData();
+      }
+    }
   },
   methods: {
   	queryData (page) {
@@ -187,7 +200,6 @@ export default {
     },
 
   created() {
-    console.log('3333', this.$store.state.role)
     this.getActivityactivityType();
     this.getDistricts();
     this.getActivityStatus();

@@ -5,22 +5,26 @@
 	    top: 35px;
 	}
 	.show-item {
-		padding: 20px 0;
+		display: flex;
+		align-items: center;
+		padding: 14px 0;
 		color: #606266;
 		font-size: 14px;
 	}
-	.show-item span {
-		margin: 26px;
+	.show-item i:nth-child(1) {
+	    color: #409EFF;
+	    font-size: 16px;
 	}
-	.show-item img {
-		width: 300px;
-		height: 150px;
+	.show-item span:nth-child(2) {
+	    margin-right: 22px;
+	    color: #409EFF;
+	    font-size: 16px;
 	}
 </style>
 
 <template>
   <div class="container">
-  	<div class="btn-ctn">
+  	<div class="btn-ctn" v-if="$store.state.role != 0">
   		<el-button @click="handleClick" type="primary">
 	  		{{ status === 'edit' ? '保存' : '编辑' }}
 	  	</el-button>
@@ -87,26 +91,32 @@
     
     <div v-if="status === 'show'">
     	<div class="show-item">
+    		<i class="el-icon-caret-right"></i>
     		<span>组织名称: </span>
     		<span>{{queryData.name}}</span>
     	</div>
     	<div class="show-item">
+    		<i class="el-icon-caret-right"></i>
     		<span>组织类型: </span>
     		<span>{{queryData.type}}</span>
     	</div>
     	<div class="show-item">
+    		<i class="el-icon-caret-right"></i>
     		<span>组织校区: </span>
     		<span>{{queryData.district}}</span>
     	</div>
     	<div class="show-item">
+    		<i class="el-icon-caret-right"></i>
     		<span>组织简介: </span>
     		<span>{{queryData.description}}</span>
     	</div>
     	<div class="show-item">
+    		<i class="el-icon-caret-right"></i>
     		<span>组织logo: </span>
-    		<img :src="queryData.logo">
+    		<el-image :src="queryData.logo" :fit="contain" style="width:400px; height: 250px;"></el-image>
     	</div>
     	<div class="show-item">
+    		<i class="el-icon-caret-right"></i>
     		<span>组织slogan: </span>
     		<span>{{queryData.slogan}}</span>
     	</div>

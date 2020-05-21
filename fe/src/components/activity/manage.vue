@@ -275,7 +275,7 @@ div[data-v-5fe69405] {
       this.getDistricts();
       this.getActivityStatus();
     },
-    mounted() {
+    activated() {
       this.$store.state.isLogin && this.queryData(1);
     }
   };

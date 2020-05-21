@@ -190,7 +190,7 @@ export default {
     this.getDistricts();
     this.getCommunityTypes();
   },
-  mounted() {
+  activated() {
     this.$store.state.isLogin && this.queryData(1);
   }
 };

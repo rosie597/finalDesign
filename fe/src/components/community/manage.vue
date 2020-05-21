@@ -225,7 +225,7 @@ div[data-v-ca82064a] {
       this.getDistricts();
       this.getCommunityTypes();
     },
-    mounted() {
+    activated() {
       if (this.$store.state.isLogin) {
         this.queryData(1);
       }

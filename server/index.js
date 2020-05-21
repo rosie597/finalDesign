@@ -8,9 +8,15 @@ const db = require('./utils/database');
 const multer=require('multer'); //可以解析multipart/form-data类型数据
 const pathLib=require('path');
 const fs=require('fs');
+const history = require('connect-history-api-fallback');
 
 const server=express();
 server.listen(8883);
+
+// 前端路由配置方案
+server.use(history({
+  index: '/'
+}));
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {

@@ -31,10 +31,10 @@
   	    </el-table-column>
   	    <el-table-column
   	      fixed="right"
-  	      label="操作"
-  	      width="150">
+  	      label="操作">
   	      <template slot-scope="scope" v-if="scope.row.role == '游客'">
   	        <el-button @click="setMaster(scope.row)" type="text" size="small">设为管理员</el-button>
+            <el-button type="text" size="small">删除</el-button>
   	      </template>
   	    </el-table-column>
       </el-table>
@@ -159,7 +159,7 @@
     created() {
     	this.getRoles();
     },
-    mounted() {
+    activated() {
       this.$store.state.isLogin && this.queryData(1);
     }
   };

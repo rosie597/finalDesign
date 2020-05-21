@@ -60,14 +60,20 @@
 	    		{
 	    			id: 1,
 	    			job: '会长',
-	    			name: '千千',
-	    			phone: 1888888888
+	    			name: '小刘',
+	    			phone: 13104864291
 	    		},
 	    		{
 	    			id: 2,
 	    			job: '副会长',
-	    			name: '易易',
-	    			phone: 1888888881
+	    			name: '小王',
+	    			phone: 1318888888
+	    		},
+	    		{
+	    			id: 3,
+	    			job: '权益部部长',
+	    			name: '小李',
+	    			phone: 1316666666
 	    		}
 	    	],
 	    	jobItem: { job: '', name: '', phone: ''},

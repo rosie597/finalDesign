@@ -197,17 +197,16 @@ export default {
           message: '网络错误'
         })
       })
-    },
-
+    }
+  },
   created() {
     this.getActivityactivityType();
     this.getDistricts();
     this.getActivityStatus();
   },
 
-  mounted() {
+  activated() {
     this.queryData(1);
   }
-}
 }
 </script>

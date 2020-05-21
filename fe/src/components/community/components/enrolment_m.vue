@@ -41,8 +41,8 @@
 	      label="操作"
 	      width="150">
 	      <template slot-scope="scope">
-	        <el-button @click="showModal('edit',scope.row)" type="text" size="small" disabled="$store.state.role == 0">编辑</el-button>
-	        <el-button @click="deleteMember(scope.row)" type="text" size="small" disabled="$store.state.role == 0">删除</el-button>
+	        <el-button @click="showModal('edit',scope.row)" type="text" size="small">编辑</el-button>
+	        <el-button @click="deleteMember(scope.row)" type="text" size="small">删除</el-button>
 	      </template>
 	    </el-table-column>
     </el-table>
@@ -124,13 +124,13 @@ export default {
         },
     	queryList: [
     		{
-                id: 111,			
-                name: '火星哥',
+          id: 111,			
+          name: '刘晓柔',
     			number: '3116009989',
     			academy: 0,
     			sex: 0,
     			phone: '1223321212',
-                community_id: 10002
+          community_id: 10002
     		}
     	],
         academyMap: {0: '材能学院'},
@@ -304,7 +304,7 @@ export default {
     this.queryForm.community_id = this.id;
   },
   
-  mounted() {
+  activated() {
     this.queryData(1);
   }
 };

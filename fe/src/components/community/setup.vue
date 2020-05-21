@@ -24,7 +24,7 @@
 		<div class="card">
 	    	<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
 			  <el-menu-item index="1">主页信息</el-menu-item>
-			  <el-menu-item index="2" disabled="$store.state.role == 0">基本设置</el-menu-item>
+			  <el-menu-item index="2">基本设置</el-menu-item>
 			  <el-menu-item index="3">成员管理</el-menu-item>
 			</el-menu>
 	    	<div v-if="activeIndex === '1'">
